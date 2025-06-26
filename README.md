@@ -1,5 +1,9 @@
-HELLO I fork it, adding edit/rm/clipboard/stuffs buttons
-TODO: add JS in this REPO
+HELLO I fork it, adding edit/rm/clipboard/stuffs buttons   
+TODO: add JS in this REPO   
+Other Fork : https://github.com/bonnebulle/SubtaskDescription_bonnebulle#   
+Helpfull to display/Add a subtask description !!!   
+
+. .. Look at /Assets/js/app.min.js
 
 ![north_west](./Assets/images/north_west.svg) Use the table of contents icon
 
