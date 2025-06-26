@@ -3,6 +3,8 @@ TODO: add JS in this REPO
 Other Fork : https://github.com/bonnebulle/SubtaskDescription_bonnebulle#   
 Helpfull to display/Add a subtask description !!!   
 
+Originale ISSUE : https://github.com/JustFxDev/SubtasksOnBoard/issues/3
+
 ![fork_preview.png](fork_preview.png)
 
 . .. Look at /Assets/js/app.min.js
