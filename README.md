@@ -1,13 +1,25 @@
 HELLO I fork it, adding edit/rm/clipboard/stuffs buttons   
-TODO: add JS in this REPO   
-Other Fork : https://github.com/bonnebulle/SubtaskDescription_bonnebulle#   
+- ADD Dragndrop (MYSQL)     
+- Edit Buttons    
+- Show_hide    
+
+WORKS with :    
+https://github.com/bonnebulle/SubtaskDescription_bonnebulle   
 Helpfull to display/Add a subtask description !!!   
 
-Originale ISSUE : https://github.com/JustFxDev/SubtasksOnBoard/issues/3
+~~TODO: add JS in this REPO~~    
+- /Assets/js/vbulle.js    
+- /Assets/css/vbulle_kanboard.css
 
-![fork_preview.png](fork_preview.png)
+Originale ISSUE :     
+https://github.com/JustFxDev/SubtasksOnBoard/issues/3    
 
-. .. Look at /Assets/js/app.min.js
+RESULT :    
+![fork_preview.png](fork_preview.png)    
+
+---- 
+
+ORIGINALE    
 
 ![north_west](./Assets/images/north_west.svg) Use the table of contents icon
 

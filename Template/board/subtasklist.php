@@ -28,6 +28,7 @@
                     
                 <!-- EDIT btns -->
                 <div class='edit_subtask'>
+                    <!-- <span class="extra_icns"> -->
                     <!-- /// CLIPBOARD store data -->
                     <?php if($subtask["due_description"] != "0"): ?>
                         <a class="cpclip" onclick="cpclip('<?=
@@ -37,23 +38,24 @@
                                 $subtask["due_description"]
                             )
                         ?>')">
-                           <i class="fa fa-clipboard"></i>
+                        <i class="fa fa-clipboard"></i>
                         </a>
                     <?php endif ?>
                     <!-- /// TOGGLE SHOW/HIDE -->
                     <a class="toggle_sub_desc_a" onclick="" data-task_id="<?= $task["id"] ?>" data-subtask_id="<?=$subtask["id"] ?>">
                         <label class="toggle_sub_desc" for="toggle_sub_desc_<?= $subtask_id ?>"><i class='fa fa-eye'></i></label>
                     </a>
+                    <!-- </span> -->
                     <!-- /// RM -->
-                    <a class="js-modal-medium" href="/?controller=SubtaskController&action=confirm&task_id=<?= $task["id"] ?>&subtask_id=<?=$subtask["id"] ?>">
+                    <a class="js-modal-medium rmbutt" href="/?controller=SubtaskController&action=confirm&task_id=<?= $task["id"] ?>&subtask_id=<?=$subtask["id"] ?>">
                         <i class="fa fa-trash-o fa-fw js-modal-large" aria-hidden="true"></i>
                     </a>
                     <!-- /// MOD EDIT -->
-                    <a class="js-modal-medium" href="/?controller=SubtaskController&action=edit&task_id=<?= $task["id"] ?>&subtask_id=<?=$subtask["id"] ?>">
+                    <a class="js-modal-medium editbutt" href="/?controller=SubtaskController&action=edit&task_id=<?= $task["id"] ?>&subtask_id=<?=$subtask["id"] ?>">
                         <i class="fa fa-edit fa-fw js-modal-large" aria-hidden="true"></i>
                     </a>
                     <!-- //// DRAG N DROP   -->
-                    <span class='drame' onclick="">
+                    <span class='drame dragbutt' onclick="">
                         <a href="" class="dragme_a">
                             <i class="fa fa-hand-paper-o" aria-hidden="true" onclick=""></i>
                         </a>
