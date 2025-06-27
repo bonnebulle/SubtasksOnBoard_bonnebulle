@@ -70,6 +70,11 @@
     const params = new URLSearchParams(window.location.search);
     return params.get('data-task-id');
   }
+  function getTaskIdFromUrl_highlight() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('highlight');
+  }
+
   // 2. Chercher l'élément correspondant dans la page
   function highlightTaskById() {
     // alert("highlightTaskById")
@@ -78,7 +83,9 @@
       const el = document.querySelector(`[data-task-id="${taskId}"]`);
       if (el) {
         // Par exemple, on ajoute une classe pour le mettre en évidence
-        el.classList.add('task-highlighted');
+        if (!getTaskIdFromUrl_highlight) {
+          el.classList.add('task-highlighted');
+        }
         // Ou on peut scroller jusqu'à l'élément
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
@@ -204,6 +211,127 @@
 
   })
 
+  function ajax_this(subtaskId,taskId,newText,$this,project_id) {
+
+    $.ajax({
+      url: "/jsonrpc.php",
+      type: "POST",
+      contentType: "application/json",
+      data: JSON.stringify({
+          "jsonrpc": "2.0",
+          "method": "updateSubtask",
+          "id": Date.now(),
+          "params": {
+              "id": subtaskId,
+              "task_id": taskId,
+              "title": newText
+          }
+      }),
+      success: function(response) {
+          // Optionnel : remettre le texte initial au blur
+          // var $form = $subDesc;
+          // reset_textarea($form)
+          // alert("sssss")
+          $($this).text(newText)
+          $textarea=$($this).find("textarea")
+          $textarea.remove()
+          // sub_title_clic()
+
+          setTimeout(function () {
+            // sub_title_clic()
+            // sub_dec_clic()
+            // initToggleSubDesc()  
+            // window.location.reload();
+            window.location.href = "https://kb.vincent-bonnefille.fr/?controller=BoardViewController&action=show&project_id="+project_id+"&data-task-id="+taskId+"&highlight=no";
+          },100);
+
+      },
+    });
+
+
+  }
+
+  // VBULLE SUBTASK on clic +
+  function sub_title_clic() {
+    // alert("sub_dec_clic")
+    // alert($('.sub_desc').length)
+
+    // SUBTASK TITLE -> TEXTAREA -> PHP MAJ DUE_DESCRIPTION
+    $('.sub_task_title_only').on('click', function(e) {
+      e.preventDefault(); // 1. Empêche le comportement par défaut
+      e.stopPropagation();
+
+      var $this = $(this);
+      var $wrap_desc = $(this).closest(".wrap_desc");
+      var $button = $('<button class="sub_task_title_only_button" type="submit">Ok</button>');
+      $this.after($button);
+
+
+      /// CONTINUE .sub_desc DESC ACTIONS
+      /// POP TEXTAREA title
+      var currentText = $this.find(".title_text").text();
+      var $textarea = $('<textarea class="title_please" name="text" tabindex="-1" placeholder="Titre">').val(currentText);
+      $this.append($textarea);
+      $textarea.focus();
+      $this.find(".title_text").remove()
+
+      /// AUTO HEIGHT
+      autoResizeTextarea($textarea[0]);
+      $textarea.on('input', function() {
+        autoResizeTextarea(this);
+      });
+
+
+
+      /// PREVENT on NEW TEXTAREA POPed
+      $($textarea).on('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+      });
+
+
+      // Récupérer les éléments nécessaires
+      var $subDesc = $(this).parent().parent().parent().find('.sub_desc');
+      var subtaskId = $subDesc.data('subid');
+      var taskId = $subDesc.data('taskid');
+      var project_id = $subDesc.data('projectid');
+
+
+      /// ONCLICK SUBMIT BUTTON
+      $(".sub_task_title_only_button").on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        // alert("submit_sub_desc_edit")
+
+        var newText = $(this).parent().find('textarea[name="text"]').val();
+        // alert(newText)
+        ajax_this(subtaskId,taskId,newText,$this,project_id)
+        
+      }); /// END $('.submit_sub_desc_edit') ONCLICK SUBMIT BUTTON
+
+
+    }); /// END .sub_desc CLICK
+
+
+
+    /// ON SUBTASK TEXTAREA SUBMIT --- TITLE
+    $(document).on('submit', '.sub_title_form', function(e) {
+      e.preventDefault(); // Empêche le rechargement de la page
+      // alert($(this).attr("class"))
+      var subtaskId = $(this).attr('data-subtask_id');
+      var taskId = $(this).attr('data-task_id');
+      var project_id = $(this).attr('data-project_id');
+      var newText = $(this).find("textarea").val();
+      // alert(taskId +" -- "+ subtaskId +" -- "+ newText)
+      if (newText != "") {
+        ajax_this(subtaskId,taskId,newText,this,project_id)
+      }
+    }); /// SUBMIT
+  } /// FUN sub_dec_clic
+  
+  /////// INIT
+  sub_title_clic()
+  //////////////
   
   // VBULLE SUBTASK on clic +
   function sub_dec_clic() {
@@ -300,12 +428,12 @@
       /////
       reset_textarea($form)
       /////
-  
     }).fail(function(xhr) {
         alert("Erreur AJAX : " + xhr.statusText);
-    });
-  });
+    }); /// POST
+  }); /// SUBMIT
   
+
 
 
   /// DEPRECIATED (localstorage)
