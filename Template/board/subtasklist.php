@@ -17,17 +17,30 @@
             <i class="fa fa-eye ok" aria-hidden="true" onclick=""></i>
         </a>
     </span>
+    
     <!-- ///// -->
     <?php foreach ($subtasks as $subtask): ?>
-        
         <tr class="subt_tr">
-            <td class="subt_td">
+            <td class="subt_td" onclick="">
+
+            <!-- TASKS CONTENT Render -->
+            <span class='hideme'>
+                <?= 
+                    $ids = $this->subtask->renderids($task, $subtask);
+                ?>
+            </span>
 
                 <!-- TASKS TITLE Render -->
-                <?= $this->subtask->renderToggleStatus($task, $subtask) ?>
+                <form class="sub_title_form" data-task_id="<?= $task["id"] ?>" data-subtask_id="<?=$subtask["id"] ?>" data-project_id="<?=$ids['project_id'] ?>" method="post">
+                    <span class="sub_task_title_only" onclick="">
+                        <span class="title_text"><?= $subtask["title"] ?></span>
+                    </span>
+                </form>
+                
                     
                 <!-- EDIT btns -->
                 <div class='edit_subtask'>
+
                     <!-- <span class="extra_icns"> -->
                     <!-- /// CLIPBOARD store data -->
                     <?php if($subtask["due_description"] != "0"): ?>
@@ -41,6 +54,7 @@
                         <i class="fa fa-clipboard"></i>
                         </a>
                     <?php endif ?>
+
                     <!-- /// TOGGLE SHOW/HIDE -->
                     <a class="toggle_sub_desc_a" onclick="" data-task_id="<?= $task["id"] ?>" data-subtask_id="<?=$subtask["id"] ?>">
                         <label class="toggle_sub_desc" for="toggle_sub_desc_<?= $subtask_id ?>"><i class='fa fa-eye'></i></label>
@@ -60,16 +74,9 @@
                             <i class="fa fa-hand-paper-o" aria-hidden="true" onclick=""></i>
                         </a>
                     </span>
-
                 </div>
             </td>
 
-            <!-- TASKS CONTENT Render -->
-            <span class='hideme'>
-                <?= 
-                    $ids = $this->subtask->renderids($task, $subtask);
-                ?>
-            </span>
             <?= $this->hook->render('template:board:tooltip:subtasks:rows', array( 'subtask' => $subtask, "csrf_token" => $ids['csrf_token'], "task_id" => $ids['task_id'], "subtask_id" => $ids['subtask_id'], "project_id" => $ids['project_id']) ) ?>
 
         </tr>
