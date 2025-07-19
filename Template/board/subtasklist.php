@@ -9,17 +9,16 @@
 
 
 <?php $subtask_num=0 ?>
-<?php  $have_desc = ( empty($subtask['due_description']) ) ? "sans" : "avec" ?>
+<!-- DESCRIPTION == vide ? -->
+<?php $have_desc = ( empty($subtask['due_description']) ) ? "sans" : "avec" ?>
+
 
 <table class="table-suboncard" data-have_desc="<?=$have_desc ?>">
     <div class="dropdown-submenu-open_alt" onclick="">
-    <li>
+        <li>
             <i class="fa fa-info ok" aria-hidden="true"></i>
-            <a href="/?controller=SubtaskController&action=create&task_id=<?=$task["id"] ?>" class="js-modal-medium" title="add"><i class="fa fa-plus fa-fw" aria-hidden="true"></i></a>
+            <a href="/?controller=SubtaskController&action=create&task_id=<?=$task["id"] ?>" class="js-modal-medium" title="Ajouter une tache"><i class="fa fa-plus fa-fw" aria-hidden="true"></i></a>
         </li>        
-        <!-- <li>
-            <i class="fa fa-bullseye cible" aria-hidden="true"></i>
-        </li>         -->
     </div>
     <span class='all_toggle_wraper' onclick="">
         <a href="" class="all_toggle active">
@@ -29,6 +28,8 @@
     
     <!-- ///// -->
     <?php foreach ($subtasks as $subtask): ?>
+        <?php $ids = $this->subtask->renderids($task, $subtask); ?>
+
         <tr class="subt_tr">
             <td class="subt_td" onclick="">
 
@@ -38,11 +39,13 @@
 
                 <!-- <span class="extra_icns"> -->
                 <!-- /// CLIPBOARD store data -->
-                <!-- <?php if($subtask["due_description"] != "0"): ?> -->
-                    <a class="cpclip" onclick='cpclip(<?= $task["id"] ?>,<?=$subtask["id"] ?>)'>
-                        <i class="fa fa-clipboard"></i>
-                    </a>
-                <!-- <?php endif ?> -->
+                <a class="cpclip" onclick='cpclip(<?= $task["id"] ?>,<?=$subtask["id"] ?>)'>
+                    <i class="fa fa-clipboard"></i>
+                </a>
+
+                <a class="plink_sub" href='/?controller=BoardViewController&action=show&project_id=<?=$ids['project_id'] ?>&data-subtask-id=<?=$subtask["id"] ?>'>
+                    <i class="fa fa-link"></i>
+                </a>
 
                 <!-- /// TOGGLE SHOW/HIDE -->
                 <a class="toggle_sub_desc_a" onclick="" data-task_id="<?= $task["id"] ?>" data-subtask_id="<?=$subtask["id"] ?>">
@@ -71,19 +74,13 @@
             </div>
 
             <!-- TASKS CONTENT Render -->
-            <!-- <span class='hideme'>
-                <?= 
-                    $ids = $this->subtask->renderids($task, $subtask);
-                ?>
-            </span> -->
-
-                <!-- TASKS TITLE Render -->
-                <form class="sub_title_form" data-task_id="<?= $task["id"] ?>" data-subtask_id="<?=$subtask["id"] ?>" data-project_id="<?=$ids['project_id'] ?>" data-position="<?=$subtask["position"] ?>" method="post">
-                    <span class="sub_task_title_only" onclick="">
-                        <span class="title_text"><?= $subtask["title"] ?></span>
-                    </span>
-                </form>
-                
+            <!-- TASKS TITLE Render -->
+            <form class="sub_title_form" data-task_id="<?= $task["id"] ?>" data-subtask_id="<?=$subtask["id"] ?>" data-project_id="<?=$ids['project_id'] ?>" data-position="<?=$subtask["position"] ?>" method="post">
+                <span class="sub_task_title_only" onclick="">
+                    <span class="title_text"><?= $subtask["title"] ?></span>
+                </span>
+            </form>
+            
                    
             </td>
 
@@ -100,7 +97,7 @@
         <div class="dropdown-submenu-open_alt">
             <li>
                 <i class="fa fa-eye ok1 hideme" aria-hidden="true"></i>
-                <a href="/?controller=SubtaskController&action=create&task_id=<?php print_r($task["id"]) ?>" class="js-modal-medium ok" title="add"><i class="fa fa-plus fa-fw" aria-hidden="true"></i></a>
+                <a href="/?controller=SubtaskController&action=create&task_id=<?php print_r($task["id"]) ?>" class="js-modal-medium ok" title="Ajouter une sous-tache"><i class="fa fa-plus fa-fw" aria-hidden="true"></i></a>
             </li>
         </div>    
     </table>

@@ -23,6 +23,8 @@
 // /README_VBULLE_NOTES.txt
 ////////////////////////
 
+const adebug_active = "oui";
+const off="off"
 
 if ( $("#board").length != 0 ) {
 
@@ -39,7 +41,7 @@ if ( $("#board").length != 0 ) {
   })
   /// Fix Normal Desc text -> link open normal modal 
   $(".markdown.description-inside-task").each(function (e) {
-    // alert( $(this).parent().parent().data("task-url") )
+    // alb( $(this).parent().parent().data("task-url") )
     let editurl_origine = $(this).parent().parent().data("task-url") 
 
     $(this).on("click", function(e) {
@@ -50,7 +52,7 @@ if ( $("#board").length != 0 ) {
       
       setTimeout(function () {
         $('textarea[name="description"]').focus()
-        // alert("focus")
+        // alb("focus")
       },300);
 
     })
@@ -64,7 +66,7 @@ if ( $("#board").length != 0 ) {
   //// ADD Swimline default
   $("#board").each(function() {
     if ( $(this).find(".board-swimlane-toggle").length == 0 ) {
-      // alert("Null")
+      // alb("Null")
       let swan_id=$(this).find("tr").first().attr("class").replace("board-swimlane-columns-", "")
       let trsw = `<tr id="swimlane-`+swan_id+`">
           <th class="board-swimlane-header" colspan="4">
@@ -111,13 +113,13 @@ if ( $("#board").length != 0 ) {
       let urlObj = new URL(url);
       urlObj.searchParams.delete('search');
       
-      // alert(url)
+      // alb(url)
 
       // 2. Ajouter le nouveau paramètre "search"
       urlObj.searchParams.append('search', `+tag:"${tagname}"`);
 
       let tagurl = urlObj.toString().replace("%2B","+")
-      // alert(tagurl)
+      // alb(tagurl)
       // console.log("Redirection vers :", tagurl);
 
       // 3. Rediriger vers la nouvelle URL
@@ -146,33 +148,32 @@ if ( $("#board").length != 0 ) {
 
   // 2. Chercher l'élément correspondant dans la page
   function highlightTaskById() {
-    // alert("highlightTaskById")
+    // alb("highlightTaskById")
     const taskId = getTaskIdFromUrl();
+    const subtaskId = getSubTaskIdFromUrl();
 
     if (taskId) {
-      const subtaskId = getSubTaskIdFromUrl();
       const el = document.querySelector(`[data-task-id="${taskId}"]`);
-
-      if (subtaskId) { // ### avec sub id (ex: after mv subtask (cible))
-
-        /// USED after moving subtask (cible)
-        let sub_el=$(el).find(".sub_title_form[data-subtask_id="+subtaskId+"]")
-        $(sub_el).parent().next(".sub_desc").addClass('sub_task-highlighted');
-        $(sub_el).parent().addClass('sub_task-highlighted');
+      // ### Normal link, no subtask -> task highlight
+      if (el) {
+        const params = new URLSearchParams(window.location.search);
+        if (!params.get('highlight')) {
+          el.classList.add('task-highlighted');
+        }
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-      } else { // ### Normal link, no subtask -> task highlight
-        
-        if (el) {
-          const params = new URLSearchParams(window.location.search);
-          if (!params.get('highlight')) {
-            el.classList.add('task-highlighted');
-          }
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }  
-
-      }
+      }  
     }
+
+    if (subtaskId) { // ### avec sub id (ex: after mv subtask (cible))
+      /// USED after moving subtask (cible)
+      // alb(subtaskId)
+      const sub_el_scroll=document.querySelector(`[data-subtask_id="${subtaskId}"]`)
+      let sub_el=$(".sub_title_form[data-subtask_id="+subtaskId+"]")
+      $(sub_el).parent().next(".sub_desc").addClass('sub_task-highlighted');
+      $(sub_el).parent().addClass('sub_task-highlighted');
+      sub_el_scroll.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
   }
   // Exécuter au chargement de la page
   highlightTaskById();
@@ -197,7 +198,7 @@ if ( $("#board").length != 0 ) {
 
 
   function initToggleSubDesc(mess) {
-    // alert("initToggleSubDesc== "+mess)
+    // alb("initToggleSubDesc== "+mess)
 
     /// SHOW/HIDE SUBTASK (checkboxs) toggles
     $(".task-board .table-suboncard .toggle_sub_desc_a").each(function () {
@@ -251,7 +252,7 @@ if ( $("#board").length != 0 ) {
     let $checkbox_a= $task_wrp.find(".toggle_sub_desc_a")
 
 
-    // alert($desc.length)
+    // alb($desc.length)
     
     if ($this.is(".active")) {
       $checkbox.prop("checked", false);
@@ -284,7 +285,7 @@ if ( $("#board").length != 0 ) {
           $($this).addClass("active")
         }
 
-        // alert(checkis)
+        // alb(checkis)
         /// GET LOCAL SHOW/HIDE chekbox 1
         localStorage.setItem("sub_desc_checkbox_"+task_id+"_"+subtask_id, checkis);
 
@@ -293,7 +294,7 @@ if ( $("#board").length != 0 ) {
     })
     // if (coco_hide == coco) {
     //   $this.closest(".all_toggle").removeClass("active")
-    //   alert("yes")
+    //   alb("yes")
     // }
 
   })
@@ -325,7 +326,7 @@ if ( $("#board").length != 0 ) {
       success: function(response) {
           // Optionnel : remettre le texte initial au blur
           var $form = $this;
-          // alert("ok ajax")
+          // alb("ok ajax")
           ////// END -> DO
           if ((newTitle!="") && (newText!="")) {
              //// USE on paste (title + desc_text)
@@ -335,7 +336,7 @@ if ( $("#board").length != 0 ) {
           }
       },
       error: function(xhr) {
-          alert("Erreur AJAX : " + xhr.statusText);
+          alb("Erreur AJAX : " + xhr.statusText);
       }
     });
     
@@ -360,7 +361,7 @@ if ( $("#board").length != 0 ) {
   //       // Optionnel : remettre le texte initial au blur
   //       // var $form = $subDesc;
   //       // reset_textarea($form)
-  //       // alert("sssss")
+  //       // alb("sssss")
         
   //       $($this).text(newText_fix) 
   //       $textarea=$($this).find("textarea")
@@ -383,8 +384,8 @@ if ( $("#board").length != 0 ) {
 
   // VBULLE SUBTASK on clic +
   function sub_title_clic() {
-    // alert("sub_dec_clic")
-    // alert($('.sub_desc').length)
+    // alb("sub_dec_clic")
+    // alb($('.sub_desc').length)
 
     // SUBTASK TITLE -> TEXTAREA -> PHP MAJ DUE_DESCRIPTION
     $('.sub_task_title_only').on('click', function(e) {
@@ -447,13 +448,13 @@ if ( $("#board").length != 0 ) {
     /// ON SUBTASK TEXTAREA SUBMIT --- TITLE
     $(document).on('submit', '.sub_title_form', function(e) {
       e.preventDefault(); // Empêche le rechargement de la page
-      // alert($(this).attr("class"))
+      // alb($(this).attr("class"))
       let $this = $(this);
       var subtaskId = $(this).attr('data-subtask_id');
       var taskId = $(this).attr('data-task_id');
       var project_id = $(this).attr('data-project_id');
       var newText = $(this).find("textarea").val();
-      // alert(taskId +" -- "+ subtaskId +" -- "+ newText)
+      // alb(taskId +" -- "+ subtaskId +" -- "+ newText)
       if (newText != "") {
         ajax_this(subtaskId,taskId,newText,"",$this,project_id)
       }
@@ -466,8 +467,8 @@ if ( $("#board").length != 0 ) {
   
   // VBULLE SUBTASK on clic +
   function sub_dec_clic(message, context) {
-    // alert("sub_dec_clic")
-    // alert($('.sub_desc').length)
+    // alb("sub_dec_clic")
+    // alb($('.sub_desc').length)
 
     // SUBTASK -> TEXTAREA -> PHP MAJ DUE_DESCRIPTION
     $('.sub_desc_title').on('click', function(e) {
@@ -481,7 +482,7 @@ if ( $("#board").length != 0 ) {
 
       // console.log($($this).find(".submit_sub_desc_edit"))
       if ( $($this).find(".submit_sub_desc_edit").length <= 0 ) {
-        // alert("exits")
+        // alb("exits")
       // } else {
         $wrap_desc.after($button);
       }
@@ -490,7 +491,7 @@ if ( $("#board").length != 0 ) {
       $(".submit_sub_desc_edit").on('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        // alert("submit_sub_desc_edit")
+        // alb("submit_sub_desc_edit")
     
         // Récupérer les éléments nécessaires
         var $subDesc = $(this).closest('.sub_desc');
@@ -517,10 +518,10 @@ if ( $("#board").length != 0 ) {
                 var $form = $subDesc;
                 ///// END -> DO
                 reset_textarea("success onclick",$form)
-                // alert("kkk")
+                // alb("kkk")
             },
             error: function(xhr) {
-                alert("Erreur AJAX : " + xhr.statusText);
+                alb("Erreur AJAX : " + xhr.statusText);
             }
         });
         //// END AJAX
@@ -610,36 +611,36 @@ if ( $("#board").length != 0 ) {
         var $subDesc = $(this).parent().parent().find('.sub_desc');
         var subtaskId = $subDesc.data('subid');
         
-        // alert($(this).attr("class"))
-        // alert(subtaskId)
+        // alb($(this).attr("class"))
+        // alb(subtaskId)
         // if (!subtaskId) return
 
         var taskId = $subDesc.data('taskid');
         var project_id = $subDesc.data('projectid');
         
-        // alert(subtaskId)
-        // alert(taskId)
-        // alert(project_id)
+        // alb(subtaskId)
+        // alb(taskId)
+        // alb(project_id)
 
         let newTitle = lines.slice(0, sepIndex).join('\n').trim();
         let newText = lines.slice(sepIndex + 1).join('\n').trim();
-        // alert(newTitle)
-        // alert(newText)
+        // alb(newTitle)
+        // alb(newText)
 
         ajax_this(subtaskId,taskId,newText,newTitle,$form,project_id) // DESC !inversed_order==first
         // ajax_this(subtaskId,taskId,newText,"",$form,project_id) // DESC !inversed_order==first
 
-        // alert("ok")
+        // alb("ok")
 
     } else {
 
       $.post(url, data, function(response) {
-        // alert("Description mise à jour !");
+        // alb("Description mise à jour !");
         ///// END -> DO
         reset_textarea("on submit",$form)
         /////
       }).fail(function(xhr) {
-          alert("Erreur AJAX : " + xhr.statusText);
+          alb("Erreur AJAX : " + xhr.statusText);
       }); /// POST
 
     }
@@ -676,7 +677,7 @@ if ( $("#board").length != 0 ) {
     e.stopPropagation();
     let url = $(this).attr("href")
     window.open(url, '_kan_url');
-    // alert(url)
+    // alb(url)
   })
 
 
@@ -717,7 +718,7 @@ if ( $("#board").length != 0 ) {
           },
           success: function(response) {
               // Optionnel : traiter la réponse
-              // alert("new order")
+              // alb("new order")
           }
         }); // AJAX
 
@@ -730,7 +731,32 @@ if ( $("#board").length != 0 ) {
   }).disableSelection();
 
   
+  $(".task-board-icons").each(function() {
+    let thisis=$(this)
+    let vide=0
 
+    $(thisis).find(".task-board-icons-row").each(function() {
+      /// https://stackoverflow.com/a/10262019
+      const str= $(this).text()
+      const isWhitespaceString = str => !str.replace(/\s/g, '').length
+      if ( isWhitespaceString ) {
+        vide++
+        $(this).remove()
+      }
+      alb(vide, off)
+      if (vide!=3) {
+        alb("all_vide", off)
+        $(thisis).removeClass("loading_have_subt")
+      }
+    })
+  })
+
+  // $(".table-suboncard").each(function() {
+    // alb($(this).attr("data-have_desc"))
+    // if ($(this).attr("data-have_desc")) {
+// 
+    // }
+  // })
 
 
 
@@ -740,13 +766,17 @@ if ( $("#board").length != 0 ) {
   ///// FUNCTIONS
   /// RESET TEXTAREA
   /// ( USE ON SUBTASK TEXTAREA SUBMIT )
+  function alb(message, active) {
+    if (adebug_active=="oui" && active!="off") alert(message);
+  }
+
   function reset_textarea($message, $form, context, taskId, subtaskId) {
-    // alert("reset_textarea == "+$message)
+    // alb("reset_textarea == "+$message)
     var $textarea = $form.find("textarea");
     var newText = $textarea.val();
-    // alert(context)
-    // alert($form.attr("class"))
-    // alert(newText)
+    // alb(context)
+    // alb($form.attr("class"))
+    // alb(newText)
 
     // LOAD marked JS --> 
     // app/Template/layout.php
@@ -762,9 +792,9 @@ if ( $("#board").length != 0 ) {
       //// TITLE and DESC
       // $form.parent().find(".sub_task_title_only")
       $formform=$form.parent().parent().find(".sub_desc_form")
-      // alert($formform.attr("class"))
+      // alb($formform.attr("class"))
       $titltitle=$formform.parent().parent().find(".sub_task_title_only")
-      // alert($titltitle.attr("class"))
+      // alb($titltitle.attr("class"))
       
 
       $.ajax({
@@ -797,21 +827,21 @@ if ( $("#board").length != 0 ) {
     } else if (context=="title") {
     //// TITLE
 
-      // alert(html)
-      // alert(($form).attr("class"))
+      // alb(html)
+      // alb(($form).attr("class"))
       $form.parent().find(".sub_task_title_only").html('<span class="title_text">'+html.replace(/\n$/,"").replace(/---/,"\n")+'</span>');
       var $button = $form.parent().find(".sub_task_title_only_button");
-      // alert("reset")
-      // alert($form.parent().attr("class"))
+      // alb("reset")
+      // alb($form.parent().attr("class"))
       $form.parent().removeClass("textarea_active")
       $button.remove();
 
 
     } else {
     //// DESC
-      // alert("desc")
+      // alb("desc")
       $form.append('<span class="wrap_desc tmp_modified 0">'+html+'</span>');
-      // alert($form.parent().attr("class"))
+      // alb($form.parent().attr("class"))
       var $button = $form.parent().find(".submit_sub_desc_edit");
       $button.remove();
 
@@ -821,7 +851,7 @@ if ( $("#board").length != 0 ) {
 
 
     setTimeout(function () {
-      // alert("re.init sub_dec_clic")
+      // alb("re.init sub_dec_clic")
       /////// RE.INIT  SUBTASK CLICK -> TEXTAREA...
       sub_dec_clic("re", context)
       ////////
@@ -837,7 +867,7 @@ if ( $("#board").length != 0 ) {
 
   //// SAVE TOGGLE SHOW/HIDE
   function toggle_save_checkboxs($this, $desc, task_id, subtask_id) {
-    // alert("toggle_save_checkboxs")
+    // alb("toggle_save_checkboxs")
     // $this=$(this)
     // let $desc=$($this).parent().parent().next(".sub_desc")
     let $checkbox= $desc.find(".toggle_sub_desc_checkbox")
@@ -865,7 +895,7 @@ if ( $("#board").length != 0 ) {
 
   $(".description-inside-task").each(function() {
     if ($(this).find("p").length == 0) {
-      // alert("yes")
+      // alb("yes")
       $(this).addClass("vide")
     }
   })
@@ -907,13 +937,13 @@ if ( $("#board").length != 0 ) {
             
             let task_id = $(this).find(".sub_title_form").data("task_id");
             // let subtask_id = $(this).find(".sub_title_form").data("subtask_id");
-            // alert(subtask_id)
+            // alb(subtask_id)
             let subtask_pos = Number($(this).find(".sub_title_form").data("position"));
             let subtask_id_cible = subid;
-            // alert(subtask_pos)
+            // alb(subtask_pos)
             let current_table = $(this).closest(".task-board");
-            // alert(current_table.attr("class"))
-            // alert(task_id + " + " +subtask_id)
+            // alb(current_table.attr("class"))
+            // alb(task_id + " + " +subtask_id)
             // return;
 
             let getparent = $(this).closest(".task-board");
@@ -929,11 +959,11 @@ if ( $("#board").length != 0 ) {
                 },
                 success: function(response) {
                   // FEEDBACK
-                  // alert('Sous-tâche déplacée !');
+                  // alb('Sous-tâche déplacée !');
                   console.log("tache déplacée")
                 },
                 error: function(xhr) {
-                  alert('Erreur lors du déplacement : ' + xhr.statusText);
+                  alb('Erreur lors du déplacement : ' + xhr.statusText);
                 }
               }); /// AJAX SAVE MV
             }
@@ -976,7 +1006,7 @@ if ( $("#board").length != 0 ) {
                   // Redirige vers la même page avec les paramètres demandés
                   setTimeout(function () {           
                     const url = new URL(window.location.href);
-                    // alert(task_id + "----" +subid)
+                    // alb(task_id + "----" +subid)
                     url.searchParams.set('data-task-id', task_id);
                     url.searchParams.set('data-subtask-id', subid);
                     window.location.href = url.toString();
@@ -1012,7 +1042,9 @@ if ( $("#board").length != 0 ) {
             clicli++;
 
             let task_id = $(this).data("task-id")
-            // alert(task_id)
+            // alb(task_id)
+
+            ///// AJAX
             $.ajax({
               url: '/assets/php/change_subtask_parent.php',
               type: 'POST',
@@ -1022,20 +1054,20 @@ if ( $("#board").length != 0 ) {
               },
               success: function(response) {
                 // FEEDBACK
-                // alert('Sous-tâche déplacée !');
+                // alb('Sous-tâche déplacée !');
                 console.log("tache déplacée 111")
 
-                  // Optionnel : recharger la page ou mettre à jour l’UI
-                  // Redirige vers la même page avec les paramètres demandés
-                  setTimeout(function () {
-                    const url = new URL(window.location.href);
-                    url.searchParams.set('data-task-id', task_id);
-                    url.searchParams.set('data-subtask-id', subid);
-                    window.location.href = url.toString();
-                  },delay_before_reload_page);
+                // Optionnel : recharger la page ou mettre à jour l’UI
+                // Redirige vers la même page avec les paramètres demandés
+                setTimeout(function () {
+                  const url = new URL(window.location.href);
+                  url.searchParams.set('data-task-id', task_id);
+                  url.searchParams.set('data-subtask-id', subid);
+                  window.location.href = url.toString();
+                },delay_before_reload_page);
               },
               error: function(xhr) {
-                alert('Erreur lors du déplacement : ' + xhr.statusText);
+                alb('Erreur lors du déplacement : ' + xhr.statusText);
               }
             }); /// AJAX SAVE MV
           });
@@ -1044,22 +1076,80 @@ if ( $("#board").length != 0 ) {
       } // subt_td not exist ?
     }); /// task-board ( no sub overlay )
 
+  }) //// CIBLE
 
-  })
 
 
-  // function modeSelectionSubtTr() {
 
-  //     // Handler global, une seule fois
-  //     $(document).one('click', '.subt_overlay', function(e) {
-  //         e.stopPropagation();
-  //         // Action sur le .subt_tr parent
-  //         // alert('Dernier .subt_tr cliqué !');
-  //         // Nettoyage
-  //         $('.subt_overlay').remove();
-  //         $('html').removeClass('wait_clic');
-  //     });
-  // }
+
+
+
+const mois = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre" ]
+
+function frenchTodayDate() {
+
+  let today = new Date();
+  let year = today.getFullYear()
+  let dayNumber = today.getDate()
+  let month = mois[today.getMonth()]
+  let weekday = today.toLocaleDateString("fr-FR", { weekday: "long" });
+
+  return { weekday, dayNumber, month, year }
+}
+// console.log(frenchTodayDate())
+//=> { weekday: 'mercredi', dayNumber: 12, month: 'octobre', year: 2022 }
+
+
+  $('.task-board').each(function() {
+    const thiis = $(this)
+
+    /// ADD cpclip_all button
+    $(thiis).find(".rm_task_quickaction").before("\
+    <a class='cpclip_all' onclick=''> \
+       <i class='fa fa-clipboard'></i> \
+    </a>")
+
+
+    $(thiis).find(".cpclip_all").on("click", function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      let clip_text="";
+      clip_text+="# "
+      clip_text+=md( $(thiis).find(".task-board-title a").text() ) +"\n"
+      clip_text+=md( $(thiis).find(".description-inside-task").html() ) +"\n\n"
+
+      $(thiis).find('.subt_tr').each(function() {
+        clip_text+="-----\n- "
+        clip_text+=md( $(this).find('.sub_title_form').html() ) +"\n"
+        // SI DESC != VIDE
+        let txt_desc = ($(this).find('.wrap_desc').text() == "vide") ? clip_text+=md( $(this).find('.wrap_desc').html() ) +"\n": "";
+        clip_text+="-----\n\n"
+      })
+
+
+
+
+      /*So let's say you want to print date according tothe french languages rules*/
+      const capitalize = ([first,...rest]) => first.toUpperCase() + rest.join('').toLowerCase();
+      const {weekday, dayNumber, month, year} = frenchTodayDate()
+      const aujourdhui = `${capitalize(weekday)}, le ${dayNumber} ${month} ${year}`
+      // console.log(aujourdhui)
+      //=> Mercredi, le 12 octobre 2022
+      clip_text+=aujourdhui;
+      clip_text+="\n" + $(thiis).find(".task-board-title a").attr("href").replace("\/?","")
+      // alb(clip_text)
+
+      navigator.clipboard.writeText(clip_text).then(() => {
+        alert(clip_text);
+      }).catch(err => {
+          // console.error('Failed to copy text: ', err);
+          alert('Failed to copy text: ', err);
+      });
+    })
+
+  }) //// task-board
+  
 
   ///// TEXTAREA AUTO HEIGHT
   function autoResizeTextarea(textarea) {

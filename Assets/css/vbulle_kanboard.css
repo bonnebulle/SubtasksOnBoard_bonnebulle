@@ -998,6 +998,12 @@ html #board .task-board .table-suboncard td:nth-child(2).sub_task-highlighted {
   padding-left: 25px;
   margin-left: -3px;
 }
+.task-board[data-have_subt="sans"] .dropdown-submenu-open_alt {
+  padding-left: 0;
+  width: 30px;
+  margin-top: -17px;
+  margin-right: -7px;
+}
 .markdown.description-inside-task.vide + .dropdown-submenu-open_alt {
   margin-top: -20px;
   height: 24px;
@@ -1513,6 +1519,12 @@ tr.draggable-item-selected {
   border-top: 1px solid #000 !important;
   box-shadow: none;
 }
+.task-board.draggable-item {
+  cursor: grab;
+}
+.subt_tr {
+  cursor: default;
+}
 #task-view {
   padding-top: 20px !important;
 }
@@ -1759,5 +1771,30 @@ html #board-container table.table-suboncard tr {
   height: calc(100% + 8px);
 }
 .subt_overlay:hover {
-  rgba(81, 255, 0, 0.572)
+  background:rgba(81, 255, 0, 0.572)
+}
+
+.task-board {
+  padding-bottom: 0 !important;
+}
+
+.task-board.loading_have_subt .task-board-icons {
+  /* /kanboard/app/Template/board/task_private.php */
+  display:none; /* JS si times icons (footer tasks) are empty, keep .loading_have_subt -> hide */
+}
+.task-board[data-have_subt="sans"] .markdown.description-inside-task p:last-child {
+  margin-bottom: 0 !important;
+}
+
+.subt_tr .cpclip i,
+.cpclip_all {
+  cursor: pointer !important;
+}
+
+.cpclip_all i {
+  font-size: 15px !important;
+  margin-right: 4px !important;
+  top: -2px !important;
+  position: relative;
+  margin-left: -6px;
 }
