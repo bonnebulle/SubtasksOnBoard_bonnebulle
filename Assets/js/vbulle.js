@@ -1140,7 +1140,8 @@ $('.task-board').each(function() {
     /// SUB TASKS
     let tascount=0
     $(thiis).find('.subt_tr').each(function() {
-      if (tascount==0) clip_text+="\n-------------\n## "
+      if (tascount==0) clip_text+="\n----------------\n# "
+      
       if (tascount!=0) clip_text+="\n-----\n## "
       tascount++
 
@@ -1165,9 +1166,8 @@ $('.task-board').each(function() {
       }
 
     })
-    // if ($(thiis).find('.subt_tr')) clip_text+="-------------\n\n"
-    clip_text+="-------------\n\n"
-
+    if (tascount!=0) clip_text+="----------------\n\n\n"
+    if (tascount==0) clip_text+="\n---------\n\n"
 
 
 
