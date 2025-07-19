@@ -24,7 +24,8 @@
 ////////////////////////
 
 const adebug_active = "oui";
-const off="off"
+const off="off";
+const on="on";
 
 if ( $("#board").length != 0 ) {
 
@@ -769,6 +770,9 @@ if ( $("#board").length != 0 ) {
   function alb(message, active) {
     if (adebug_active=="oui" && active!="off") alert(message);
   }
+  function csl(message, active) {
+    if (adebug_active=="oui" && active!="off") console.log(message);
+  }
 
   function reset_textarea($message, $form, context, taskId, subtaskId) {
     // alb("reset_textarea == "+$message)
@@ -1126,7 +1130,29 @@ $('.task-board').each(function() {
       clip_text+="-----\n## "
       clip_text+=md( $(this).find('.sub_title_form').html() ) +"\n"
       // SI DESC != VIDE
-      let txt_desc = ($(this).find('.wrap_desc').text() == "vide") ? clip_text+=md( $(this).find('.wrap_desc').html() ) +"\n": "";
+      let str=$(this).find('.wrap_desc').text();
+      str = str.replace(/(<[^>]+>)\s+/, '$1');
+      str = str.replace(/\s+(<\/[^>]+>)/, '$1');
+      str = str.replace(/^\s+/, '');
+      // const isWhitespaceString = str.replace(/\s/g, '')
+      alb(str, off)
+
+      // Nettoyer les espaces au début et à la fin
+      let str_trim = str.trim().toLowerCase();
+
+      // Vérifier si le texte est exactement "vide" ou commence par "vide"
+      if (str_trim === "vide" || str_trim.startsWith("vide")) {
+        // C'est vide !
+        csl(str, off);
+      } else {
+        txt_desc =  md(str) +"\n";
+
+        // let txt_desc = (!str.toLowerCase().includes("vide")) ? md(str) +"\n": "";
+        csl(txt_desc, off)
+        // if (txt_desc.toLowerCase().includes("vide")) alb(str, on)
+        clip_text+=txt_desc
+      }
+
     })
     if ($(thiis).find('.subt_tr')) clip_text+="-----\n"
 
