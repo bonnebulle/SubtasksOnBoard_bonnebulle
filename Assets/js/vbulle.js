@@ -177,7 +177,9 @@ if ( $("#board").length != 0 ) {
 
   }
   // Exécuter au chargement de la page
-  highlightTaskById();
+  $(document).ready(function() {
+    highlightTaskById();
+  });
 
 
 
@@ -1140,9 +1142,9 @@ $('.task-board').each(function() {
     /// SUB TASKS
     let tascount=0
     $(thiis).find('.subt_tr').each(function() {
-      if (tascount==0) clip_text+="\n----------------\n# "
+      if (tascount==0) clip_text+="\n\n----------------\n\n## "
       
-      if (tascount!=0) clip_text+="\n-----\n## "
+      if (tascount!=0) clip_text+="\n---\n\n## "
       tascount++
 
       clip_text+=md( $(this).find('.sub_title_form').html() ) +"\n"
@@ -1166,7 +1168,7 @@ $('.task-board').each(function() {
       }
 
     })
-    if (tascount!=0) clip_text+="----------------\n\n\n"
+    if (tascount!=0) clip_text+="\n----------------\n\n\n"
     if (tascount==0) clip_text+="\n---------\n\n"
 
 

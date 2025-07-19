@@ -400,6 +400,30 @@ table td li {
   margin-top: 3px;
   line-height: 1.7em;
 }
+table td .markdown.description-inside-task li {
+  list-style: none;
+  position: relative;
+}
+
+table td .markdown.description-inside-task li::before {
+  content: "⟶";
+  position: absolute;
+  left: -19px;
+  font-size: 10px;
+}
+
+
+.markdown.description-inside-task :is(li) {
+  margin-top: -7px;
+  margin-bottom: 16px;
+  /* margin-left: 20px; */
+  margin-left: 21px;
+  padding-left: 1px;
+}
+
+table td .description-inside-task li {
+  line-height: 1.3em;
+}
 
 .table-suboncard .subtask-title i {
   margin-left: 8px;
@@ -890,11 +914,6 @@ html #board-container table.table-suboncard .wrap_desc a {
 
 .markdown.description-inside-task :is(ul) {
   margin: 0;
-}
-.markdown.description-inside-task :is(li) {
-  margin-top: -7px;
-  margin-bottom: 16px;
-  margin-left: 20px;
 }
 
 .task-board.draggable-item {
@@ -1507,6 +1526,9 @@ a:is(.js-modal-large, .js-modal-medium, .all_toggle):hover .fa  {
   margin-left: -10px;
   width: calc(100% + 6px);
   animation: mymove 1s 1 ease-in-out;
+  p {
+    white-space: break-spaces;
+  }
 }
 
 @keyframes mymove {
@@ -1778,6 +1800,9 @@ html #board-container table.table-suboncard tr {
 .task-board {
   padding-bottom: 0 !important;
 }
+.task-board[data-have_subt="avec"] {
+  padding-bottom: 10px !important
+}
 
 .task-board.loading_have_subt .task-board-icons {
   /* /kanboard/app/Template/board/task_private.php */
@@ -1798,4 +1823,13 @@ html #board-container table.table-suboncard tr {
   top: -2px !important;
   position: relative;
   margin-left: -6px;
+}
+.board-swimlane,
+[data-save-url] > tbody > tr {
+  display: flex;
+}
+.board-swimlane > td,
+.board-swimlane-header {
+  flex: 1 1 100%;
+  width: 100% !important;
 }
