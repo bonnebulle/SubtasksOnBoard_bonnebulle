@@ -1031,7 +1031,7 @@ if ( $("#board").length != 0 ) {
                   order: order
               },
               success: function(response) {
-                  // Optionnel : recharger la page ou mettre à jour l’UI
+                  // Optionnel : recharger la page ou mettre à jour l'UI
                   // Redirige vers la même page avec les paramètres demandés
                   setTimeout(function () {           
                     const url = new URL(window.location.href);
@@ -1086,7 +1086,7 @@ if ( $("#board").length != 0 ) {
                 // alb('Sous-tâche déplacée !');
                 console.log("tache déplacée 111")
 
-                // Optionnel : recharger la page ou mettre à jour l’UI
+                // Optionnel : recharger la page ou mettre à jour l'UI
                 // Redirige vers la même page avec les paramètres demandés
                 setTimeout(function () {
                   const url = new URL(window.location.href);
@@ -1163,83 +1163,76 @@ $('.task-board').each(function() {
     let today = new Date(),
     time = today.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
     
-    let clip_text="";
+    let clip_text = "";
+    let promises = [];
 
     let projet_name = $(thiis).attr("data-projet-name");
     let swimlane_name = $(thiis).attr("data-swimlane-name");
     
-    clip_text+=projet_name+" > ";
-    clip_text+=swimlane_name+ " > ";
-    clip_text+= "\nTâche n° : "+$(thiis).find(".task-board-title a").attr("href").replace("\/?","").replace("controller=TaskViewController&action=show&task_id=","")+"\n"
+    clip_text += projet_name + " > ";
+    clip_text += swimlane_name + " > ";
+    clip_text += "\nTâche n° : " + $(thiis).find(".task-board-title a").attr("href").replace("\/?","").replace("controller=TaskViewController&action=show&task_id=","") + "\n"
 
-    clip_text+="---------\n\n"
+    clip_text += "---------\n\n"
     /// TITRE DESC
-    clip_text+="# "
-    clip_text+=md( $(thiis).find(".task-board-title a").text() ) +"\n"
-    clip_text+=md( $(thiis).find(".description-inside-task").html() ) +"\n"
+    clip_text += "# "
+    clip_text += md( $(thiis).find(".task-board-title a").text() ) + "\n"
+    clip_text += md( $(thiis).find(".description-inside-task").html() ) + "\n"
     
 
+    let tasktotal=$(thiis).find('.subt_tr').length
     /// SUB TASKS
-    let tascount=0
-    $(thiis).find('.subt_tr').each(function() {
-      if (tascount==0) clip_text+="\n\n----------------\n\n## "
-      
-      if (tascount!=0) clip_text+="\n---\n\n## "
-      tascount++
-
-      clip_text+=md( $(this).find('.sub_title_form').html() ) +"\n"
-      // SI DESC != VIDE
-      let str=$(this).find('.wrap_desc').text();
-      str = str.replace(/(<[^>]+>)\s+/, '$1');
-      str = str.replace(/\s+(<\/[^>]+>)/, '$1');
-      str = str.replace(/^\s+/, '');
-      alb(str, off)
-
-      // Nettoyer les espaces au début et à la fin
-      let str_trim = str.trim().toLowerCase();
-      // Vérifier si le texte est exactement "vide" ou commence par "vide"
-      if (str_trim === "vide" || str_trim.startsWith("vide")) {
-        csl(str, off);
-        clip_text+="...\n"
-      } else {
-        txt_desc =  md(str) +"\n";
-        csl(txt_desc, off)
-        clip_text+=txt_desc
-      }
-
-    })
-    if (tascount!=0) clip_text+="\n----------------\n\n\n"
-    if (tascount==0) clip_text+="\n---------\n\n"
-
-
-
-    /*So let's say you want to print date according tothe french languages rules*/
-    const capitalize = ([first,...rest]) => first.toUpperCase() + rest.join('').toLowerCase();
-    const {weekday, dayNumber, month, year} = frenchTodayDate()
-    const aujourdhui = `${capitalize(weekday)}, le ${dayNumber} ${month} ${year}`
-    // console.log(aujourdhui)
-    //=> Mercredi, le 12 octobre 2022
-
-
-    clip_text+=aujourdhui + " -- " +time;
-    
-    clip_text+="\n. . .";
-
-    let projet_id = $(thiis).attr("data-project-id")
-    let task_id = $(thiis).attr("data-task-id")
-    var host = window.location.host; 
-    var proto = window.location.protocol; 
-    let permal = proto+"//"+host+"/?controller=BoardViewController&action=show&project_id="+projet_id+"&data-task-id="+task_id
-    clip_text+="\n" + permal;
-    // clip_text+="\n" + $(thiis).find(".task-board-title a").attr("href").replace("\/","")
-    // alb(clip_text)
-
-    navigator.clipboard.writeText(clip_text).then(() => {
-      alert(clip_text);
-    }).catch(err => {
-        // console.error('Failed to copy text: ', err);
-        alert('Failed to copy text: ', err);
+    $(thiis).find('.subt_tr').each(function() {
+      let id = $(thiis).attr("data-task-id");
+      let subid = $(this).find("[data-subtask_id]").attr("data-subtask_id");
+      // On stocke la Promise dans un tableau
+      promises.push(cpclip_subtasks(id, subid)); /// Utilisé par async (Ajax needed)
     });
+
+    Promise.all(promises).then(results => {
+
+      let tascount=1
+      results.forEach(result => {
+        /// FIRST
+        if (tascount==1) clip_text+="\n\n"+tascount+" ========================\n\n";
+        
+        /// TEXT
+        clip_text += result;
+
+        tascount++
+        // NORMAL
+        if ((tascount>1) && (tascount!=tasktotal+1)) clip_text+="\n\n"+tascount+" ====================\ \n\n";
+        // LAST
+        if (tascount==tasktotal+1) clip_text += "\n\n===========================\n\n\n";
+      });
+
+      /// INFOS
+      const capitalize = ([first,...rest]) => first.toUpperCase() + rest.join('').toLowerCase();
+      const {weekday, dayNumber, month, year} = frenchTodayDate()
+      const aujourdhui = `${capitalize(weekday)}, le ${dayNumber} ${month} ${year}`
+
+      /// LAST if no subtasks
+      if (tasktotal==0) clip_text+="\n\n========================\n\n";
+
+      clip_text += "Infos :\n"
+      clip_text += aujourdhui + " -- " + time;
+      clip_text += "\n. . .";
+
+      let projet_id = $(thiis).attr("data-project-id")
+      let task_id = $(thiis).attr("data-task-id")
+      var host = window.location.host; 
+      var proto = window.location.protocol; 
+      let permal = proto + "//" + host + "/?controller=BoardViewController&action=show&project_id=" + projet_id + "&data-task-id=" + task_id
+      clip_text += "\n" + permal;
+
+      // Ici, tu peux utiliser clip_text (copie, alert, etc.)
+      navigator.clipboard.writeText(clip_text).then(() => {
+        alert(clip_text);
+      }).catch(err => {
+        alert('Erreur lors de la copie : ' + err);
+      });
+    });
+
   })
 
 }) //// task-board
@@ -1253,7 +1246,28 @@ $('.task-board').each(function() {
   /////
 
 
-
+  function cpclip_subtasks(id, subid) {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        url: "/assets/php/get_subdescription.php",
+        type: "POST",
+        dataType: "json",
+        data: { task_id: id, subtask_id: subid, what: "title_desc" },
+        success: function(response) {
+          if (response.title) {
+            // alb(response.title)
+            let final_cp = "## "+response.title + "\n" + response.due_description;
+            resolve(final_cp);
+          } else {
+            resolve("eeerorr");
+          }
+        },
+        error: function() {
+          reject("Erreur AJAX");
+        }
+      });
+    });
+  }
 
 
   function attendreClic(element) {

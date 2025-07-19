@@ -107,16 +107,7 @@
 
 <script>
 function cpclip(id,subid) {
-    // let text_fixed = text.replace(/---ppp/g, "\\n").replace(/\\n/g, "");
-    // alert($($this).attr("class"))
     var $task_cibling = $('[data-subid="'+subid+'"][data-taskid="'+id+'"]')
-    // var $wrap_desc = $task_cibling.find(".wrap_desc");
-    // var $wrap_title = $task_cibling.prev(".subt_td").find(".title_text");
-    // alert($wrap_title.length)
-    // var currentText = md($wrap_desc.html())
-    // var currentTitle = md($wrap_title.html())
-    // alert($wrap_title)
-    // var final_cp = currentTitle.replace("<br>","\n")+"\n------\n"+currentText.replace("<br>","\n")
     let taskId = id;
     let subtaskId = subid;
 
@@ -135,10 +126,8 @@ function cpclip(id,subid) {
 
             let final_cp = response.title +"\n-------\n"+ response.due_description;
             navigator.clipboard.writeText(final_cp).then(() => {
-                // console.log('Text copied to clipboard!');
                 alert(final_cp);
             }).catch(err => {
-                // console.error('Failed to copy text: ', err);
                 alert('Failed to copy text: ', err);
             });
 
