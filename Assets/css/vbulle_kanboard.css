@@ -890,8 +890,13 @@ html #board-container table.table-suboncard .submit_sub_desc_edit {
   cursor: pointer;
 }
 
+.task-board .description-inside-task a,
 html #board-container table.table-suboncard .wrap_desc a {
   color: #003cae;
+}
+.task-board .description-inside-task a:hover,
+html #board-container table.table-suboncard .wrap_desc a:hover {
+  color: red;
 }
 
 
@@ -951,7 +956,18 @@ html #board .task-board .table-suboncard td:nth-child(2).sub_task-highlighted {
   background:rgba(0, 255, 234, 0.164) !important
 }
 .task-highlighted {
-  outline: 4px solid red;
+  outline: 2px solid rgb(255, 138, 138);
+  border-color: rgba(255, 0, 0, 0.299) !important;
+}
+.task-board.draggable-item.task-highlighted::before {
+  content: "\f005";
+  position: absolute;
+  font-family: FontAwesome;
+  margin-top: -7px;
+  float: right;
+  right: 3px;
+  font-size: 17px;
+  color:rgba(255, 0, 0, 0.299) !important;
 }
 
 .task-board div.edit_subtask {

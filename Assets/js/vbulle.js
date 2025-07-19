@@ -40,6 +40,7 @@ if ( $("#board").length != 0 ) {
     let editurl = editurl_origine.replace("show","edit").replace("TaskViewController", "TaskModificationController")
     KB.modal.open(editurl, "medium", !0);
   })
+
   /// Fix Normal Desc text -> link open normal modal 
   $(".markdown.description-inside-task").each(function (e) {
     // alb( $(this).parent().parent().data("task-url") )
@@ -55,8 +56,14 @@ if ( $("#board").length != 0 ) {
         $('textarea[name="description"]').focus()
         // alb("focus")
       },300);
-
     })
+      $(this).find("a").on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        let url = $(this).attr("href")
+        window.open(url, '_kan_url');
+        alb(url,off)
+      })
   
   })
 
@@ -167,7 +174,7 @@ if ( $("#board").length != 0 ) {
         // 2. Après un petit délai, ajuste le scroll horizontal
         setTimeout(function() {
           window.scrollBy({ top: -80, left: -20, behavior: 'smooth' });
-        }, 400);
+        }, 100);
       }  
     }
 
@@ -187,8 +194,8 @@ if ( $("#board").length != 0 ) {
 
       // 2. Après un petit délai, ajuste le scroll horizontal
       setTimeout(function() {
-        window.scrollBy({ top: -70, left: -20, behavior: 'smooth' });
-      }, 400);
+        window.scrollBy({ top: -90, left: -20, behavior: 'smooth' });
+      }, 100);
 
     }
 
@@ -489,8 +496,6 @@ if ( $("#board").length != 0 ) {
   
   // VBULLE SUBTASK on clic +
   function sub_dec_clic(message, context) {
-    // alb("sub_dec_clic")
-    // alb($('.sub_desc').length)
 
     // SUBTASK -> TEXTAREA -> PHP MAJ DUE_DESCRIPTION
     $('.sub_desc_title').on('click', function(e) {
@@ -513,7 +518,6 @@ if ( $("#board").length != 0 ) {
       $(".submit_sub_desc_edit").on('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        // alb("submit_sub_desc_edit")
     
         // Récupérer les éléments nécessaires
         var $subDesc = $(this).closest('.sub_desc');
