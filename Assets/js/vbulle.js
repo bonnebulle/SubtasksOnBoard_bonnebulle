@@ -1122,40 +1122,51 @@ $('.task-board').each(function() {
     time = today.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
     
     let clip_text="";
+
+    let projet_name = $(thiis).attr("data-projet-name");
+    let swimlane_name = $(thiis).attr("data-swimlane-name");
+    
+    clip_text+=projet_name+" > ";
+    clip_text+=swimlane_name+ " > ";
+    clip_text+= "\nTâche n° : "+$(thiis).find(".task-board-title a").attr("href").replace("\/?","").replace("controller=TaskViewController&action=show&task_id=","")+"\n"
+
+    clip_text+="---------\n\n"
+    /// TITRE DESC
     clip_text+="# "
     clip_text+=md( $(thiis).find(".task-board-title a").text() ) +"\n"
     clip_text+=md( $(thiis).find(".description-inside-task").html() ) +"\n"
+    
 
+    /// SUB TASKS
+    let tascount=0
     $(thiis).find('.subt_tr').each(function() {
-      clip_text+="\n-----\n## "
+      if (tascount==0) clip_text+="\n-------------\n## "
+      if (tascount!=0) clip_text+="\n-----\n## "
+      tascount++
+
       clip_text+=md( $(this).find('.sub_title_form').html() ) +"\n"
       // SI DESC != VIDE
       let str=$(this).find('.wrap_desc').text();
       str = str.replace(/(<[^>]+>)\s+/, '$1');
       str = str.replace(/\s+(<\/[^>]+>)/, '$1');
       str = str.replace(/^\s+/, '');
-      // const isWhitespaceString = str.replace(/\s/g, '')
       alb(str, off)
 
       // Nettoyer les espaces au début et à la fin
       let str_trim = str.trim().toLowerCase();
-
       // Vérifier si le texte est exactement "vide" ou commence par "vide"
       if (str_trim === "vide" || str_trim.startsWith("vide")) {
-        // C'est vide !
         csl(str, off);
+        clip_text+="...\n"
       } else {
         txt_desc =  md(str) +"\n";
-
-        // let txt_desc = (!str.toLowerCase().includes("vide")) ? md(str) +"\n": "";
         csl(txt_desc, off)
-        // if (txt_desc.toLowerCase().includes("vide")) alb(str, on)
         clip_text+=txt_desc
       }
 
     })
-    // if ($(thiis).find('.subt_tr')) clip_text+="-----\n"
-
+    // if ($(thiis).find('.subt_tr')) clip_text+="-------------\n\n"
+    clip_text+="-------------\n\n"
 
 
 
@@ -1167,10 +1178,10 @@ $('.task-board').each(function() {
     // console.log(aujourdhui)
     //=> Mercredi, le 12 octobre 2022
 
-    clip_text+="\n---------\n"
-    clip_text+=aujourdhui + " -- " +time +" (";
-    clip_text+=$(thiis).find(".task-board-title a").attr("href").replace("\/?","").replace("controller=TaskViewController&action=show&task_id=","")
-    clip_text+=")"
+
+    clip_text+=aujourdhui + " -- " +time;
+    
+    clip_text+="\n. . .";
 
     let projet_id = $(thiis).attr("data-project-id")
     let task_id = $(thiis).attr("data-task-id")
