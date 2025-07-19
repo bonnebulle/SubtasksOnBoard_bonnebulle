@@ -392,7 +392,7 @@ table td {
   border-left: 1px solid;
     border-left-color: currentcolor;
   padding-left: 8px;
-  margin-top: 0px;
+  margin-top: 5px;
 }
 table td li {
   margin-left: 12px;
@@ -400,29 +400,51 @@ table td li {
   margin-top: 3px;
   line-height: 1.7em;
 }
-table td .markdown.description-inside-task li {
+table td :is(.markdown.description-inside-task,.wrap_desc) ul > li {
   list-style: none;
   position: relative;
 }
 
-table td .markdown.description-inside-task li::before {
+table td :is(.markdown.description-inside-task,.wrap_desc) ul > li::before {
   content: "⟶";
   position: absolute;
   left: -19px;
   font-size: 10px;
 }
 
-
-.markdown.description-inside-task :is(li) {
-  margin-top: -7px;
-  margin-bottom: 16px;
+:is(.markdown.description-inside-task) :is(li) {
+margin-top: -7px;
+margin-bottom: 16px;
+}
+:is(.markdown.description-inside-task,.wrap_desc) :is(li) {
   /* margin-left: 20px; */
   margin-left: 21px;
   padding-left: 1px;
 }
+html #board-container table.table-suboncard ul {
+  border-left: 1px solid;
+  padding-left: 9px;
+  margin-left: 3px;
+}
+
 
 table td .description-inside-task li {
   line-height: 1.3em;
+}
+
+table :is(.wrap_desc) ol {
+  border-left: 1px solid #000 !important;
+  padding-left: 13px;
+  margin-left: -12px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+:is(.markdown.description-inside-task, .wrap_desc) ol li {
+  line-height: 1.6em;
+  margin-bottom: 0.6em;
+  width: calc(100% - 32px);
+  word-wrap: break-word;
+  text-align: left;
 }
 
 .table-suboncard .subtask-title i {
