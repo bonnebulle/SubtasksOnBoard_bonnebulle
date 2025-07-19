@@ -5,6 +5,7 @@
   --font_minsize_fix: 13px;
   --text_lienh_fix: 20px;
   --width_subtask_icons: 130px;
+  --border_color: gray;
 }
 
 
@@ -436,6 +437,7 @@ table td li {
 .table-suboncard td:nth-child(1) {
   border: 1px solid #b2b2b2 !important;
   padding: 14px 2px 5px 2px !important;
+  padding: 7px 2px 0px 0px !important;
   line-height: 2em !important;
   font-size: 14px !important;
   background: transparent !important;
@@ -772,9 +774,13 @@ table.table-suboncard td {
 }
 #board .table-suboncard td + td {
   padding-top: 9px;
+  padding-bottom: 0;
   min-height: 30px;
   margin-bottom: -7px;
   padding-left: 11px;
+}
+.subt_tr.first_clic_origine:not(:last-child) {
+  margin-bottom: 23px !important;
 }
 
 /* #board .table-suboncard td + td.sub_desc.active {
@@ -897,10 +903,10 @@ html #board-container table.table-suboncard .wrap_desc a {
 
 html #board .task-board .table-suboncard td:nth-child(1).sub_task-highlighted
  {
-  background:rgba(43, 198, 0, 0.257) !important
+  background:rgba(0, 255, 204, 0.151) !important
 }
 html #board .task-board .table-suboncard td:nth-child(2).sub_task-highlighted {
-  background:rgba(55, 255, 0, 0.257) !important
+  background:rgba(0, 255, 234, 0.164) !important
 }
 .task-highlighted {
   outline: 4px solid red;
@@ -918,19 +924,24 @@ html #board .task-board .table-suboncard td:nth-child(2).sub_task-highlighted {
     padding-right: 3px;
     color: #5755d9;
     position: relative;
-    right: -2px;
+    /* right: -2px; */
     background: beige;
     z-index: 1;
     margin-bottom: -25px;
     /* top: -10px; */
     /* padding-left: 10px; */
-    padding-bottom: 1px !important;
+    padding-bottom: 0px !important;
     height: auto;
     margin-bottom: -60px;
     border-radius: 0 0 0 10px;
-    top: -13px;  
-    padding-left: 13px;  
-    padding-top: 3px;
+    /* top: -13px; */
+    padding-left: 5px;
+    padding-top: 0px;
+    top: -7px;  
+    right: -2px;
+}
+.cpclip {
+  padding-left: 7px;
 }
 .subt_td.textarea_active .edit_subtask {
   display: none;
@@ -958,7 +969,7 @@ html #board .task-board .table-suboncard td:nth-child(2).sub_task-highlighted {
   position: relative;
 }
 .markdown.description-inside-task.vide + .dropdown-submenu-open_alt +  .all_toggle_wraper > .all_toggle {
-  top: 12px;
+  top: 11px;
 }
 
 .all_toggle:not(.active) .window-minimize::before {
@@ -988,13 +999,15 @@ html #board .task-board .table-suboncard td:nth-child(2).sub_task-highlighted {
   margin-left: -3px;
 }
 .markdown.description-inside-task.vide + .dropdown-submenu-open_alt {
-  margin-top: -18px;
+  margin-top: -20px;
+  height: 24px;
 }
 .dropdown-submenu-open_alt li {
   list-style: none;
   display: inline;
   float: right;
   margin-bottom: 2px;
+  margin-top: 2px;
 }
 .all_toggle_wraper {
   position: absolute;
@@ -1376,6 +1389,11 @@ label:is([for="form-category_id"],[for="form-priority"],[for="form-score"]) {
 .task-board-header .js-modal-confirm.rm_task_quickaction i {
   font-size: 18px;
 }
+a:hover i.fa,
+.fa.fa-info:hover,
+a:is(.js-modal-large, .js-modal-medium, .all_toggle):hover .fa  {
+  color: green !important;
+}
 .js-modal-confirm.rm_task_quickaction:hover > i {
   color: red;
 }
@@ -1517,13 +1535,15 @@ tr.draggable-item-selected {
 }
 .task-board-header {
   background: beige;
-  padding: 5px 7px 1px 12px;
+  padding: 1px 6px 0px 15px;
   /* border: 1px solid #b4b4b4; */
   /* border-width: 0 0 1px 1px; */
   border-radius: 0px 0 0px 8px;
   top: -3px;
   right: -3px;
   left: auto;
+  z-index: 1;
+  height: 25px;
 }
 #form-color_id {
   float: left !important;
@@ -1634,9 +1654,14 @@ tr.draggable-item-selected {
   cursor: pointer;
 }
 
-.task-board:not(.clicked_parent) .subt_overlay:hover {
-  background-color: rgba(81, 255, 0, 0.572);
+/* :not(.clicked_parent) */
+.task-board .subt_overlay:hover {
+  background-color: rgba(81, 255, 0, 0.288);
 }
+.task-board .first_clic_origine .subt_overlay:hover {
+  background-color: rgba(81, 255, 0, 0);
+}
+
 /* .task-board:is(.clicked_parent):hover { */
   /* background-color: rgba(255, 0, 0, 0.254); */
   /* background: #00ffc3 !important; */
@@ -1646,7 +1671,93 @@ tr.draggable-item-selected {
 .first_clic_origine {
   background: #00800036;
 }
-.first_clic_origine,
-.subt_tr.first_clic_origine {
+.first_clic_origine {
   background: #ffb300c3 !important;
+  padding-bottom: 7px !important;
+  margin-bottom: -7px;
+}
+
+
+
+/* Inline | https://kb.vincent-bonnefille.fr/?controller=BoardViewController&action=show&project_id=1&data-task-id=3&data-subtask-id=2 */
+
+.table-suboncard td {
+  border-spacing: 30px;
+  border-collapse: unset;
+}
+
+.subt_tr:not(:last-child) {
+  margin-bottom: 30px !important;
+}
+
+#board .table-suboncard td {
+  border-top: 1px solid var(--border_color) !important;
+}
+
+.sub_desc.sub_desc_title.active {
+}
+
+#board .table-suboncard td:nth-child(2) {
+  border-bottom: 1px solid var(--border_color) !important;
+}
+
+.sub_desc.sub_desc_title.active {
+}
+
+#board .table-suboncard td {
+  border-radius: ;
+  border-right: 1px solid var(--border_color) !important;
+  border-left: 1px solid var(--border_color) !important;
+}
+
+/* vbulle_kanboard.css | https://kb.vincent-bonnefille.fr/assets/css/vbulle_kanboard.css?1752866798 */
+
+#board .table-suboncard tbody > .subt_tr {
+  border: none !important;
+}
+
+html #board-container table.table-suboncard, html #board-container table.table-suboncard * {
+  /* border-color: #8d8d8d; */
+  border-color: transparent;
+}
+
+html #board-container table.table-suboncard tr {
+  /* background: #FFFFFF80; */
+  background: transparent;
+}
+
+#board .table-suboncard td:is(:nth-child(1), :nth-child(2), :nth-child(3)) {
+  /* border-right-width: 0px !important; */
+  /* border-left-width: 0px !important; */
+  border-right-width: 1px !important;
+  border-left-width: 2px !important;
+}
+/* .wrap_desc {
+  padding-bottom: 0px !important;
+  display: block;
+} */
+.table-suboncard {
+  overflow: visible !important;
+}
+
+.wait_clic .edit_subtask {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+.wait_clic .subt_tr:not(.first_clic_origine) .subt_overlay:hover {
+  cursor: alias;
+}
+
+.wait_clic .subt_tr:is(.first_clic_origine) .subt_overlay:hover {
+  cursor: default;
+}
+
+
+.subt_overlay {
+  /* position: relative; */
+  margin-top: -1px;
+  height: calc(100% + 8px);
+}
+.subt_overlay:hover {
+  rgba(81, 255, 0, 0.572)
 }
