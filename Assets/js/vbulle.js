@@ -1124,10 +1124,10 @@ $('.task-board').each(function() {
     let clip_text="";
     clip_text+="# "
     clip_text+=md( $(thiis).find(".task-board-title a").text() ) +"\n"
-    clip_text+=md( $(thiis).find(".description-inside-task").html() ) +"\n\n"
+    clip_text+=md( $(thiis).find(".description-inside-task").html() ) +"\n"
 
     $(thiis).find('.subt_tr').each(function() {
-      clip_text+="-----\n## "
+      clip_text+="\n-----\n## "
       clip_text+=md( $(this).find('.sub_title_form').html() ) +"\n"
       // SI DESC != VIDE
       let str=$(this).find('.wrap_desc').text();
@@ -1154,7 +1154,7 @@ $('.task-board').each(function() {
       }
 
     })
-    if ($(thiis).find('.subt_tr')) clip_text+="-----\n"
+    // if ($(thiis).find('.subt_tr')) clip_text+="-----\n"
 
 
 
