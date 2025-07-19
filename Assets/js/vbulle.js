@@ -1100,56 +1100,71 @@ function frenchTodayDate() {
 //=> { weekday: 'mercredi', dayNumber: 12, month: 'octobre', year: 2022 }
 
 
-  $('.task-board').each(function() {
-    const thiis = $(this)
+$('.task-board').each(function() {
+  const thiis = $(this)
 
-    /// ADD cpclip_all button
-    $(thiis).find(".rm_task_quickaction").before("\
-    <a class='cpclip_all' onclick=''> \
-       <i class='fa fa-clipboard'></i> \
-    </a>")
-
-
-    $(thiis).find(".cpclip_all").on("click", function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      let clip_text="";
-      clip_text+="# "
-      clip_text+=md( $(thiis).find(".task-board-title a").text() ) +"\n"
-      clip_text+=md( $(thiis).find(".description-inside-task").html() ) +"\n\n"
-
-      $(thiis).find('.subt_tr').each(function() {
-        clip_text+="-----\n- "
-        clip_text+=md( $(this).find('.sub_title_form').html() ) +"\n"
-        // SI DESC != VIDE
-        let txt_desc = ($(this).find('.wrap_desc').text() == "vide") ? clip_text+=md( $(this).find('.wrap_desc').html() ) +"\n": "";
-        clip_text+="-----\n\n"
-      })
+  /// ADD cpclip_all button
+  $(thiis).find(".rm_task_quickaction").before("\
+  <a class='cpclip_all' onclick=''> \
+      <i class='fa fa-clipboard'></i> \
+  </a>")
 
 
+  $(thiis).find(".cpclip_all").on("click", function(e) {
+    e.preventDefault();
+    e.stopPropagation();
 
+    let today = new Date(),
+    time = today.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+    
+    let clip_text="";
+    clip_text+="# "
+    clip_text+=md( $(thiis).find(".task-board-title a").text() ) +"\n"
+    clip_text+=md( $(thiis).find(".description-inside-task").html() ) +"\n\n"
 
-      /*So let's say you want to print date according tothe french languages rules*/
-      const capitalize = ([first,...rest]) => first.toUpperCase() + rest.join('').toLowerCase();
-      const {weekday, dayNumber, month, year} = frenchTodayDate()
-      const aujourdhui = `${capitalize(weekday)}, le ${dayNumber} ${month} ${year}`
-      // console.log(aujourdhui)
-      //=> Mercredi, le 12 octobre 2022
-      clip_text+=aujourdhui;
-      clip_text+="\n" + $(thiis).find(".task-board-title a").attr("href").replace("\/?","")
-      // alb(clip_text)
-
-      navigator.clipboard.writeText(clip_text).then(() => {
-        alert(clip_text);
-      }).catch(err => {
-          // console.error('Failed to copy text: ', err);
-          alert('Failed to copy text: ', err);
-      });
+    $(thiis).find('.subt_tr').each(function() {
+      clip_text+="-----\n## "
+      clip_text+=md( $(this).find('.sub_title_form').html() ) +"\n"
+      // SI DESC != VIDE
+      let txt_desc = ($(this).find('.wrap_desc').text() == "vide") ? clip_text+=md( $(this).find('.wrap_desc').html() ) +"\n": "";
     })
+    if ($(thiis).find('.subt_tr')) clip_text+="-----\n"
 
-  }) //// task-board
-  
+
+
+
+
+    /*So let's say you want to print date according tothe french languages rules*/
+    const capitalize = ([first,...rest]) => first.toUpperCase() + rest.join('').toLowerCase();
+    const {weekday, dayNumber, month, year} = frenchTodayDate()
+    const aujourdhui = `${capitalize(weekday)}, le ${dayNumber} ${month} ${year}`
+    // console.log(aujourdhui)
+    //=> Mercredi, le 12 octobre 2022
+
+    clip_text+="\n---------\n"
+    clip_text+=aujourdhui + " -- " +time +" (";
+    clip_text+=$(thiis).find(".task-board-title a").attr("href").replace("\/?","").replace("controller=TaskViewController&action=show&task_id=","")
+    clip_text+=")"
+
+    let projet_id = $(thiis).attr("data-project-id")
+    let task_id = $(thiis).attr("data-task-id")
+    var host = window.location.host; 
+    var proto = window.location.protocol; 
+    let permal = proto+"//"+host+"/?controller=BoardViewController&action=show&project_id="+projet_id+"&data-task-id="+task_id
+    clip_text+="\n" + permal;
+    // clip_text+="\n" + $(thiis).find(".task-board-title a").attr("href").replace("\/","")
+    // alb(clip_text)
+
+    navigator.clipboard.writeText(clip_text).then(() => {
+      alert(clip_text);
+    }).catch(err => {
+        // console.error('Failed to copy text: ', err);
+        alert('Failed to copy text: ', err);
+    });
+  })
+
+}) //// task-board
+
 
   ///// TEXTAREA AUTO HEIGHT
   function autoResizeTextarea(textarea) {
