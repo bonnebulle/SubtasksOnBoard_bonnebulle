@@ -1839,6 +1839,7 @@ html #board-container table.table-suboncard tr {
   cursor: pointer !important;
 }
 
+.plink_sub_task i,
 .cpclip_all i {
   font-size: 15px !important;
   margin-right: 4px !important;

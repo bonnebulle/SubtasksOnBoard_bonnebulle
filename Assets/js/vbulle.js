@@ -161,7 +161,13 @@ if ( $("#board").length != 0 ) {
         if (!params.get('highlight')) {
           el.classList.add('task-highlighted');
         }
-        // el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        /// SCROLL
+        el.scrollIntoView({ behavior: 'auto', block: 'start', inline: 'center' });
+
+        // 2. Après un petit délai, ajuste le scroll horizontal
+        setTimeout(function() {
+          window.scrollBy({ top: -80, left: -20, behavior: 'smooth' });
+        }, 400);
       }  
     }
 
@@ -172,16 +178,17 @@ if ( $("#board").length != 0 ) {
       const sub_el = $('.sub_title_form[data-subtask_id="'+subtaskId+'"]');
       $(sub_el).parent().next(".sub_desc").addClass('sub_task-highlighted');
       $(sub_el).parent().addClass('sub_task-highlighted');
+      /// SCROLL
       sub_el[0].scrollIntoView({ 
         behavior: 'auto',
         block: 'start', // vertical haut bas
-        inline: 'start' // horizontal gauche droite
+        inline: 'center' // horizontal gauche droite
       });
 
       // 2. Après un petit délai, ajuste le scroll horizontal
       setTimeout(function() {
         window.scrollBy({ top: -70, left: -20, behavior: 'smooth' });
-      }, 400); // 400ms pour laisser le scrollIntoView finir (à ajuster si besoin)
+      }, 400);
 
     }
 
@@ -1121,11 +1128,28 @@ function frenchTodayDate() {
 $('.task-board').each(function() {
   const thiis = $(this)
 
+  
+
+
+
   /// ADD cpclip_all button
   $(thiis).find(".rm_task_quickaction").before("\
   <a class='cpclip_all' onclick=''> \
       <i class='fa fa-clipboard'></i> \
   </a>")
+
+
+  var host = window.location.host; 
+  var proto = window.location.protocol; 
+  var data_task_id = $(this).attr("data-task-id")
+  var data_project_id = $(this).attr("data-project-id")
+  /// ADD plink_sub_task button
+  $(thiis).find(".rm_task_quickaction").before("\
+    <a class='plink_sub_task' href='"+proto+"//"+host+"/?controller=BoardViewController&action=show&project_id="+data_project_id+"&data-task-id="+data_task_id+"'> \
+        <i class='fa fa-link'></i> \
+    </a>")
+
+
 
 
   $(thiis).find(".cpclip_all").on("click", function(e) {
