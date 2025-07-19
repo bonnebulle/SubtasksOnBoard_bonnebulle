@@ -161,24 +161,36 @@ if ( $("#board").length != 0 ) {
         if (!params.get('highlight')) {
           el.classList.add('task-highlighted');
         }
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }  
     }
 
     if (subtaskId) { // ### avec sub id (ex: after mv subtask (cible))
       /// USED after moving subtask (cible)
       // alb(subtaskId)
-      const sub_el_scroll=document.querySelector(`[data-subtask_id="${subtaskId}"]`)
-      let sub_el=$(".sub_title_form[data-subtask_id="+subtaskId+"]")
+      // const sub_el_scroll=document.querySelector(`[data-subtask_id="${subtaskId}"]`)
+      const sub_el = $('.sub_title_form[data-subtask_id="'+subtaskId+'"]');
       $(sub_el).parent().next(".sub_desc").addClass('sub_task-highlighted');
       $(sub_el).parent().addClass('sub_task-highlighted');
-      sub_el_scroll.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      sub_el[0].scrollIntoView({ 
+        behavior: 'auto',
+        block: 'start', // vertical haut bas
+        inline: 'start' // horizontal gauche droite
+      });
+
+      // 2. Après un petit délai, ajuste le scroll horizontal
+      setTimeout(function() {
+        window.scrollBy({ top: -70, left: -20, behavior: 'smooth' });
+      }, 400); // 400ms pour laisser le scrollIntoView finir (à ajuster si besoin)
+
     }
 
   }
   // Exécuter au chargement de la page
   $(document).ready(function() {
-    highlightTaskById();
+    setTimeout(function () {           
+      highlightTaskById();
+    },100);
   });
 
 

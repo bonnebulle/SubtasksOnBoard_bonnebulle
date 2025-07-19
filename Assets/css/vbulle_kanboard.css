@@ -422,7 +422,7 @@ margin-bottom: 16px;
   padding-left: 1px;
 }
 html #board-container table.table-suboncard ul {
-  border-left: 1px solid;
+  border-left: 1px solid #888888;
   padding-left: 9px;
   margin-left: 3px;
 }
@@ -433,7 +433,7 @@ table td .description-inside-task li {
 }
 
 table :is(.wrap_desc) ol {
-  border-left: 1px solid #000 !important;
+  border-left: 1px solid #888888 !important;
   padding-left: 13px;
   margin-left: -12px;
   padding-top: 0;
