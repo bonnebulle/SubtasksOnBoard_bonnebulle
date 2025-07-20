@@ -359,9 +359,9 @@ if ( $("#board").length != 0 ) {
           ////// END -> DO
           if ((newTitle!="") && (newText!="")) {
              //// USE on paste (title + desc_text)
-            reset_textarea("success onclick", $form, "title_and_desc", taskId, subtaskId)
+            reset_textarea("success onclick title", $form, "title_and_desc", taskId, subtaskId)
           } else {
-            reset_textarea("success onclick", $form, "title")
+            reset_textarea("success onclick noptitle", $form, "title")
           }
       },
       error: function(xhr) {
@@ -452,7 +452,7 @@ if ( $("#board").length != 0 ) {
 
 
 
-    /// ON SUBTASK TEXTAREA SUBMIT --- TITLE
+    /// ON SUBTASK TEXTAREA SUBMIT --- TITLE / desc ?
     $(document).on('submit', '.sub_title_form', function(e) {
       e.preventDefault(); // Empêche le rechargement de la page
       // alb($(this).attr("class"))
@@ -528,9 +528,8 @@ if ( $("#board").length != 0 ) {
                 var $form = $subDesc;
                 ///// END -> DO
                 reset_textarea("success onclick",$form)
+                $form.find('.wrap_desc').addClass("after_escape")
                 $($form).find(".original").remove()
-
-                // alb("kkk")
             },
             error: function(xhr) {
                 alb("Erreur AJAX : " + xhr.statusText);
@@ -626,11 +625,6 @@ if ( $("#board").length != 0 ) {
 
         var $subDesc = $(this).parent().parent().find('.sub_desc');
         var subtaskId = $subDesc.data('subid');
-        
-        // alb($(this).attr("class"))
-        // alb(subtaskId)
-        // if (!subtaskId) return
-
         var taskId = $subDesc.data('taskid');
         var project_id = $subDesc.data('projectid');
         
@@ -650,10 +644,21 @@ if ( $("#board").length != 0 ) {
 
     } else {
 
+
+      var $subDesc = $(this).parent().parent().find('.sub_desc');
+      // alb($($subDesc).attr("class"))
+      var subtaskId = $subDesc.data('subid');
+      var taskId = $subDesc.data('taskid');
+      // var project_id = $subDesc.data('projectid');
+
+
       $.post(url, data, function(response) {
         // alb("Description mise à jour !");
         ///// END -> DO
-        reset_textarea("on submit",$form)
+
+        // reset_textarea($message, $form, context, taskId, subtaskId) {
+        reset_textarea("on submit ok",$form, "duedescription", taskId, subtaskId)
+        // alb("iii")
         /////
       }).fail(function(xhr) {
           alb("Erreur AJAX : " + xhr.statusText);
@@ -768,18 +773,17 @@ if ( $("#board").length != 0 ) {
   /// RESET TEXTAREA
   /// ( USE ON SUBTASK TEXTAREA SUBMIT )
   function reset_textarea($message, $form, context, taskId, subtaskId) {
-    // alb("reset_textarea == "+$message)
+    // alb("reset_textarea == "+$message, on)
     var $textarea = $form.find("textarea");
     var newText = $textarea.val();
-    // alb(context)
-    // alb($form.attr("class"))
-    // alb(newText)
+    // alb("taskId == "+taskId)
+    // alb("subtaskId == "+subtaskId)
 
     // LOAD marked JS --> 
     // app/Template/layout.php
     // <?= $this->asset->js('assets/js/marked.min.js') ?>
 
-    var html = marked.parse(newText);
+    var html_new_desc = marked.parse(newText);
     // .replace(/\* <br>/g, "uuu"); // Conversion Markdown -> HTML
     // var $formform = $(this).find("form");
 
@@ -825,12 +829,10 @@ if ( $("#board").length != 0 ) {
     } else if (context=="title") {
     //// TITLE
 
-      // alb(html)
-      // alb(($form).attr("class"))
-      $form.parent().find(".sub_task_title_only").html('<span class="title_text">'+html.replace(/\n$/,"").replace(/---/,"\n")+'</span>');
+      $form.parent().find(".sub_task_title_only").html('<span class="title_text">'+html_new_desc.replace(/\n$/,"").replace(/---/,"\n")+'</span>');
+      // $form.parent().find(".sub_task_title_only").html('<span class="title_text">'+html_new_desc+'</span>');
+
       var $button = $form.parent().find(".sub_task_title_only_button");
-      // alb("reset")
-      // alb($form.parent().attr("class"))
       $form.parent().removeClass("textarea_active")
       $button.remove();
 
@@ -838,15 +840,87 @@ if ( $("#board").length != 0 ) {
     } else {
     //// DESC
       // alb("desc")
-      $form.find(".wrap_desc").html(html);
-      $($form).find(".original").remove()
-      // alb($form.parent().attr("class"))
+      setTimeout(function () {  
+          $.ajax({
+            url: "/assets/php/get_subdescription.php",
+            type: "POST",
+            dataType: "json",
+            data: {
+              task_id: taskId,
+              subtask_id: subtaskId,
+              what: "due_description"
+            },
+            success: function(response) { 
+              // alert("ff - "+response.due_description)
+
+              let due_description=response.due_description;
+              let due_description_checked = (due_description=="vide") ? html_new_desc : due_description;
+
+              $form.find(".wrap_desc").html(due_description_checked.replace(/\n$/,"").replace(/---/,"\n")).addClass("tmp_modified");
+              // var $button = $form.parent().find(".submit_sub_desc_edit");
+              // $button.remove();
+              
+              //// NO ERROR (pas vide) return 
+              if (due_description!="vide") {
+                $($form).find(".original").remove(); return; /// RETURN
+              }
+              
+              //// ERROR continue (ré-envoi)
+              if (due_description=="vide") 
+
+                $.ajax({
+                  url: "/assets/php/change_subdescription.php",
+                  type: "POST",
+                  data: {
+                      task_id: taskId,
+                      subtask_id: subtaskId,
+                      // title: newTitle,
+                      text: newText.replace(/\n$/,"").replace(/---/,"\n") //// ON renvoie de nouveau le text original (textarea)
+                      // title: $title
+                      // csrf_token: csrf_token // si tu utilises le CSRF
+                  },
+                  success: function(response) {
+                      // Optionnel : remettre le texte initial au blur
+                      // var $form = $this;
+                      // // alb("ok ajax")
+                      // ////// END -> DO
+                      // if ((newTitle!="") && (newText!="")) {
+                      //    //// USE on paste (title + desc_text)
+                      //   reset_textarea("success onclick title", $form, "title_and_desc", taskId, subtaskId)
+                      // } else {
+                      //   reset_textarea("success onclick noptitle", $form, "title")
+                      // }
+                  },
+                  error: function(xhr) {
+                      alb("Erreur AJAX : " + xhr.statusText);
+                  }
+                });
+                
+                // BUG PERSISTE, RELOAD
+                let delay_before_reload_page = 100
+                setTimeout(function () {           
+                  const url = new URL(window.location.href);
+                  url.searchParams.set('data-task-id', taskId);
+                  url.searchParams.set('data-subtask-id', subtaskId);
+                  window.location.href = url.toString();
+                },delay_before_reload_page);
+
+              
+
+            },
+            error: function(xhr, status, error) { 
+              alert("ERR", xhr, status, error); 
+            }
+          }); // AJAX
+        
+        },400);
+
+      }
+
+      $textarea.remove();
+    
       var $button = $form.parent().find(".submit_sub_desc_edit");
       $button.remove();
-
-    }
-
-    $textarea.remove();
 
     // RELOAD/DO READY to start textarea
     setTimeout(function () {

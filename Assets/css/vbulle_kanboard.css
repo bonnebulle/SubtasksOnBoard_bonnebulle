@@ -1568,7 +1568,7 @@ a:is(.js-modal-large, .js-modal-medium, .all_toggle):hover .fa  {
   opacity: 0;
 }
 .wrap_desc.tmp_modified {
-  /* white-space: preserve-breaks; */
+  white-space: preserve-breaks;
   /* border: 2px solid green; */
   background: transparent;
   padding-left: 10px;
