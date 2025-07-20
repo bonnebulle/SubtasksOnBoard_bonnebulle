@@ -816,7 +816,7 @@ if ( $("#board").length != 0 ) {
           let md_title= marked.parse(title)
           $formform.find(".wrap_desc").html(md_due_description);
           $($formform).find(".original").remove()
-          $titltitle.html('<span class="title_text">'+md_title.replace(/\n$/,"").replace(/---/,"\n")+'</span>');
+          $titltitle.html('<span class="title_text">'+md_title.replace(/\n+$/,"").replace(/---/,"\n")+'</span>');
 
           var $button = $form.parent().find(".submit_sub_desc_edit");
           $button.remove();
@@ -829,7 +829,7 @@ if ( $("#board").length != 0 ) {
     } else if (context=="title") {
     //// TITLE
 
-      $form.parent().find(".sub_task_title_only").html('<span class="title_text">'+html_new_desc.replace(/\n$/,"").replace(/---/,"\n")+'</span>');
+      $form.parent().find(".sub_task_title_only").html('<span class="title_text">'+html_new_desc.replace(/\n+$/,"").replace(/---/,"\n")+'</span>');
       // $form.parent().find(".sub_task_title_only").html('<span class="title_text">'+html_new_desc+'</span>');
 
       var $button = $form.parent().find(".sub_task_title_only_button");
@@ -855,8 +855,10 @@ if ( $("#board").length != 0 ) {
 
               let due_description=response.due_description;
               let due_description_checked = (due_description=="vide") ? html_new_desc : due_description;
+              let due_description_fixed = due_description_checked.replace(/\n+$/,"").replace(/---/,"\n")
+              // var linkified = linkify(due_description_fixed);
 
-              $form.find(".wrap_desc").html(due_description_checked.replace(/\n$/,"").replace(/---/,"\n")).addClass("tmp_modified");
+              $form.find(".wrap_desc").html(due_description_fixed).addClass("tmp_modified");
               // var $button = $form.parent().find(".submit_sub_desc_edit");
               // $button.remove();
               
@@ -875,35 +877,32 @@ if ( $("#board").length != 0 ) {
                       task_id: taskId,
                       subtask_id: subtaskId,
                       // title: newTitle,
-                      text: newText.replace(/\n$/,"").replace(/---/,"\n") //// ON renvoie de nouveau le text original (textarea)
+                      text: newText.replace(/\n+$/,"").replace(/---/,"\n") //// ON renvoie de nouveau le text original (textarea)
                       // title: $title
                       // csrf_token: csrf_token // si tu utilises le CSRF
                   },
                   success: function(response) {
                       // Optionnel : remettre le texte initial au blur
-                      // var $form = $this;
-                      // // alb("ok ajax")
-                      // ////// END -> DO
-                      // if ((newTitle!="") && (newText!="")) {
-                      //    //// USE on paste (title + desc_text)
-                      //   reset_textarea("success onclick title", $form, "title_and_desc", taskId, subtaskId)
-                      // } else {
-                      //   reset_textarea("success onclick noptitle", $form, "title")
-                      // }
+                      let due_description=response.due_description;
+                      let due_description_checked = (due_description=="vide") ? html_new_desc : due_description;
+                      let due_description_fixed = due_description_checked.replace(/\n+$/,"").replace(/---/,"\n")
+                      // var linkified = linkify(due_description_fixed);
+        
+                      $form.find(".wrap_desc").html(due_description_fixed).addClass("tmp_modified");
                   },
                   error: function(xhr) {
                       alb("Erreur AJAX : " + xhr.statusText);
                   }
                 });
                 
-                // BUG PERSISTE, RELOAD
-                let delay_before_reload_page = 100
-                setTimeout(function () {           
-                  const url = new URL(window.location.href);
-                  url.searchParams.set('data-task-id', taskId);
-                  url.searchParams.set('data-subtask-id', subtaskId);
-                  window.location.href = url.toString();
-                },delay_before_reload_page);
+                // // BUG PERSISTE, RELOAD
+                // let delay_before_reload_page = 100
+                // setTimeout(function () {           
+                //   const url = new URL(window.location.href);
+                //   url.searchParams.set('data-task-id', taskId);
+                //   url.searchParams.set('data-subtask-id', subtaskId);
+                //   window.location.href = url.toString();
+                // },delay_before_reload_page);
 
               
 

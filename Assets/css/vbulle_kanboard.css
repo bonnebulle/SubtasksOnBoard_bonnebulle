@@ -536,6 +536,7 @@ table th,
 .wrap_desc p
 {
  text-align: justify;  hyphens: auto;
+ display: inline-block;
 }
 
 /* .markdown.description-inside-task { */
