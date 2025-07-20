@@ -513,7 +513,12 @@ table th,
 .dragme_a {
   cursor: grab;
   padding-left: 4px;
-  padding: 5px 10px 10px;
+  padding: 6px 10px 10px;
+  margin-left: 2px;
+  margin-top: -5px;
+  top: -1px;
+  position: relative;
+  right: -5px;
 }
 
 .task-board-title {
@@ -885,16 +890,15 @@ html #board-container table.table-suboncard .submit_sub_desc_edit {
   padding: 7px 9px;
   border: 0px;
   border-radius: 4px;
-  margin-top: 11px !important;
   position: relative;
   left: 1px;
-
   padding: 9px 16px;
-  margin-top: -7px !important;
+  margin-top: -13px !important;
   left: auto;
-  right: 5px;
+  right: 7px;
   float: right;
   cursor: pointer;
+  margin-bottom: 8px;
 }
 
 .task-board .description-inside-task a,
@@ -967,7 +971,7 @@ html #board .task-board .table-suboncard td:nth-child(2).sub_task-highlighted {
   border-color: rgba(255, 0, 0, 0.299) !important;
 }
 .task-board.draggable-item.task-highlighted::before {
-  content: "\f005";
+  content: "\f0c1";
   position: absolute;
   font-family: FontAwesome;
   margin-top: -7px;

@@ -1266,12 +1266,16 @@ $('.task-board').each(function() {
     escapeListenerAdded = true;
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
-
+        
+        if ($('.desc_please').length > 1) {
+            if (!window.confirm("ESCAPE va fermer les zonnes de textes en cours d'édition (textareas)...\n\nPlusieurs textareas sont ouvertes. \n\nVoulez-vous toutes les fermer sans sauvegarder ?")) return;
+        }
         $('.desc_please').each(function() {
           // alb($(".desc_please").length)
           var $parent = $(this).parent();
           // alb($parent.attr("class"))
           var $textarea = $parent.find('textarea');
+          
           var $subDesc = $parent.closest('.sub_desc');
           var taskId = $subDesc.data('taskid');
           var subtaskId = $subDesc.data('subid');
