@@ -840,7 +840,7 @@ if ( $("#board").length != 0 ) {
     } else {
     //// DESC
       // alb("desc")
-      setTimeout(function () {  
+      // setTimeout(function () {  
           $.ajax({
             url: "/assets/php/get_subdescription.php",
             type: "POST",
@@ -856,53 +856,65 @@ if ( $("#board").length != 0 ) {
               let due_description=response.due_description;
               let due_description_checked = (due_description=="vide") ? html_new_desc : due_description;
               let due_description_fixed = due_description_checked.replace(/\n+$/,"").replace(/---/,"\n")
-              // var linkified = linkify(due_description_fixed);
+              // var mdpls = marked.parse(due_description_fixed);
 
               $form.find(".wrap_desc").html(due_description_fixed).addClass("tmp_modified");
-              // var $button = $form.parent().find(".submit_sub_desc_edit");
-              // $button.remove();
-              
-              //// NO ERROR (pas vide) return 
-              if (due_description!="vide") {
-                $($form).find(".original").remove(); return; /// RETURN
-              }
-              
-              //// ERROR continue (ré-envoi)
-              if (due_description=="vide") 
+              var $button = $form.parent().find(".submit_sub_desc_edit");
+              $button.remove();
 
-                $.ajax({
-                  url: "/assets/php/change_subdescription.php",
-                  type: "POST",
-                  data: {
-                      task_id: taskId,
-                      subtask_id: subtaskId,
-                      // title: newTitle,
-                      text: newText.replace(/\n+$/,"").replace(/---/,"\n") //// ON renvoie de nouveau le text original (textarea)
-                      // title: $title
-                      // csrf_token: csrf_token // si tu utilises le CSRF
-                  },
-                  success: function(response) {
-                      // Optionnel : remettre le texte initial au blur
-                      let due_description=response.due_description;
-                      let due_description_checked = (due_description=="vide") ? html_new_desc : due_description;
-                      let due_description_fixed = due_description_checked.replace(/\n+$/,"").replace(/---/,"\n")
-                      // var linkified = linkify(due_description_fixed);
-        
-                      $form.find(".wrap_desc").html(due_description_fixed).addClass("tmp_modified");
-                  },
-                  error: function(xhr) {
-                      alb("Erreur AJAX : " + xhr.statusText);
-                  }
-                });
-                
-                // // BUG PERSISTE, RELOAD
+
+                // BUG PERSISTE, RELOAD
                 // let delay_before_reload_page = 100
-                // setTimeout(function () {           
-                //   const url = new URL(window.location.href);
-                //   url.searchParams.set('data-task-id', taskId);
-                //   url.searchParams.set('data-subtask-id', subtaskId);
-                //   window.location.href = url.toString();
-                // },delay_before_reload_page);
+                setTimeout(function () {           
+                  const url = new URL(window.location.href);
+                  url.searchParams.set('data-task-id', taskId);
+                  url.searchParams.set('data-subtask-id', subtaskId);
+                  window.location.href = url.toString();
+                },100);
+
+                // TROP DE SOUCIS AVEC MD RENDING ---- RELOAD
+              
+          //     //// NO ERROR (pas vide) return 
+          //     if (due_description!="vide") {
+          //       $($form).find(".original").remove(); return; /// RETURN
+          //     }
+              
+          //     //// ERROR continue (ré-envoi)
+          //     if (due_description=="vide") 
+
+          //       $.ajax({
+          //         url: "/assets/php/change_subdescription.php",
+          //         type: "POST",
+          //         data: {
+          //             task_id: taskId,
+          //             subtask_id: subtaskId,
+          //             // title: newTitle,
+          //             text: newText.replace(/\n+$/,"").replace(/---/,"\n") //// ON renvoie de nouveau le text original (textarea)
+          //             // title: $title
+          //             // csrf_token: csrf_token // si tu utilises le CSRF
+          //         },
+          //         success: function(response) {
+          //             // Optionnel : remettre le texte initial au blur
+          //             let due_description=response.due_description;
+          //             let due_description_checked = (due_description=="vide") ? html_new_desc : due_description;
+          //             let due_description_fixed = due_description_checked.replace(/\n+$/,"").replace(/---/,"\n")
+          //             // var linkified = linkify(due_description_fixed);
+        
+          //             $form.find(".wrap_desc").html(due_description_fixed).addClass("tmp_modified");
+          //         },
+          //         error: function(xhr) {
+          //             alb("Erreur AJAX : " + xhr.statusText);
+          //         }
+          //       }); /// AJAX ERRORS
+                
+          //       // BUG PERSISTE, RELOAD
+          //       let delay_before_reload_page = 100
+          //       setTimeout(function () {           
+          //         const url = new URL(window.location.href);
+          //         url.searchParams.set('data-task-id', taskId);
+          //         url.searchParams.set('data-subtask-id', subtaskId);
+          //         window.location.href = url.toString();
+          //       },delay_before_reload_page);
 
               
 
@@ -910,24 +922,24 @@ if ( $("#board").length != 0 ) {
             error: function(xhr, status, error) { 
               alert("ERR", xhr, status, error); 
             }
-          }); // AJAX
+          }); // AJAX original
         
-        },400);
+        // },400);
 
-      }
+      } /// ELSE end
 
-      $textarea.remove();
+      // $textarea.remove();
     
-      var $button = $form.parent().find(".submit_sub_desc_edit");
-      $button.remove();
+      // var $button = $form.parent().find(".submit_sub_desc_edit");
+      // $button.remove();
 
     // RELOAD/DO READY to start textarea
-    setTimeout(function () {
-      // alb("re.init sub_dec_clic")
-      /////// RE.INIT  SUBTASK CLICK -> TEXTAREA...
-      sub_dec_clic("re", context)
-      ////////
-    },400);
+    // setTimeout(function () {
+    //   // alb("re.init sub_dec_clic")
+    //   /////// RE.INIT  SUBTASK CLICK -> TEXTAREA...
+    //   sub_dec_clic("re", context)
+    //   ////////
+    // },400);
     
   }
 
