@@ -867,6 +867,13 @@ table.table-suboncard pre {
   padding-bottom: 10px !important;
   display: block;
 }
+.wrap_desc.after_escape {
+  white-space: break-spaces;
+}
+.wrap_desc .original {
+  display: none;
+}
+
 html #board-container table.table-suboncard tr {
   background: #FFFFFF80;
 }

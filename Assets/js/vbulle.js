@@ -135,6 +135,7 @@ if ( $("#board").length != 0 ) {
       // history.replaceState(null, '', tagurl);
     });
   });
+
   /// SEARCH -> COLOR TopMenuFILTER 
   let url = window.location.href;
   let urlObj = new URL(url);
@@ -224,7 +225,6 @@ if ( $("#board").length != 0 ) {
 
   /// INIT TOGGLE
   initToggleSubDesc("mess");
-
 
   function initToggleSubDesc(mess) {
     // alb("initToggleSubDesc== "+mess)
@@ -370,44 +370,6 @@ if ( $("#board").length != 0 ) {
     });
     
 
-    //// COOL not PHP but ask user+Pass
-  // let newText_fix = newText.replace("---","<br>")
-  // $.ajax({
-  //   url: "/jsonrpc.php",
-  //   type: "POST",
-  //   contentType: "application/json",
-  //   data: JSON.stringify({
-  //       "jsonrpc": "2.0",
-  //       "method": "updateSubtask",
-  //       "id": Date.now(),
-  //       "params": {
-  //           "id": subtaskId,
-  //           "task_id": taskId,
-  //           "title": newText_fix
-  //       }
-  //   }),
-  //   success: function(response) {
-  //       // Optionnel : remettre le texte initial au blur
-  //       // var $form = $subDesc;
-  //       // reset_textarea($form)
-  //       // alb("sssss")
-        
-  //       $($this).text(newText_fix) 
-  //       $textarea=$($this).find("textarea")
-  //       $textarea.remove()
-  //       // sub_title_clic()
-
-  //       setTimeout(function () {
-  //         // sub_title_clic()
-  //         // sub_dec_clic()
-  //         // initToggleSubDesc()  
-  //         // window.location.reload();
-  //         window.location.href = "https://kb.vincent-bonnefille.fr/?controller=BoardViewController&action=show&project_id="+project_id+"&data-task-id="+taskId+"&highlight=no";
-  //       },100);
-
-  //   },
-  // });
-
 
   }
 
@@ -420,6 +382,8 @@ if ( $("#board").length != 0 ) {
     $('.sub_task_title_only').on('click', function(e) {
       e.preventDefault(); // 1. Empêche le comportement par défaut
       e.stopPropagation();
+
+
 
       var $this = $(this);
       var $parent = $(this).closest(".subt_td")
@@ -470,6 +434,10 @@ if ( $("#board").length != 0 ) {
       }); /// END $('.submit_sub_desc_edit') ONCLICK SUBMIT BUTTON
 
 
+
+
+
+      
     }); /// END .sub_desc CLICK
 
 
@@ -489,10 +457,11 @@ if ( $("#board").length != 0 ) {
       }
     }); /// SUBMIT
   } /// FUN sub_dec_clic
-  
   /////// INIT
   sub_title_clic()
   //////////////
+
+
   
   // VBULLE SUBTASK on clic +
   function sub_dec_clic(message, context) {
@@ -501,6 +470,10 @@ if ( $("#board").length != 0 ) {
     $('.sub_desc_title').on('click', function(e) {
       e.preventDefault(); // 1. Empêche le comportement par défaut
       e.stopPropagation();
+      // alb("kkkk")
+
+      reset_textarea_on_escape();
+
 
       // 2. Transforme le contenu en textarea
       var $this = $(this);
@@ -525,6 +498,7 @@ if ( $("#board").length != 0 ) {
         var taskId = $subDesc.data('taskid');
         var newText = $subDesc.find('textarea[name="text"]').val();
     
+        
         // Optionnel : CSRF token si besoin
         // var csrf_token = $subDesc.find('input[name="csrf_token"]').val();
     
@@ -544,6 +518,8 @@ if ( $("#board").length != 0 ) {
                 var $form = $subDesc;
                 ///// END -> DO
                 reset_textarea("success onclick",$form)
+                $($form).find(".original").remove()
+
                 // alb("kkk")
             },
             error: function(xhr) {
@@ -582,7 +558,11 @@ if ( $("#board").length != 0 ) {
             // console.log("OK due_description", response.title); 
 
             var $textarea = $('<textarea class="desc_please" name="text" tabindex="-1" placeholder="Markdown">').val(response.due_description);
-            $wrap_desc.replaceWith($textarea);
+            
+            var contenu = $wrap_desc.html();
+            $wrap_desc.html("<div class='original'>" + contenu + "</div>");
+
+            $wrap_desc.prepend($textarea);
             $textarea.focus();
   
             // /// AUTO HEIGHT
@@ -671,30 +651,13 @@ if ( $("#board").length != 0 ) {
 
     }
 
+    $(this).find(".original").remove()
+
 
   
   }); /// SUBMIT
   
 
-
-
-  /// DEPRECIATED (localstorage)
-  // $(function() {
-  //     let task_id = $(".table-suboncard").data("taskid");
-  //     /// GET LOCAL ORDER ( replaced --> MYSQL -> change_suborder.php)
-  //     // let order = localStorage.getItem("subtasks_order_" + task_id);
-  //     if (order) {
-  //         order = JSON.parse(order);
-  //         let tbody = $(".table-suboncard tbody");
-  //         // On trie les lignes selon l'ordre stocké
-  //         order.forEach(function(subtask_id) {
-  //             let row = tbody.find('.sub_desc[data-subid="' + subtask_id + '"]').closest(".subt_tr");
-  //             if (row.length) {
-  //                 tbody.append(row); // déplace la ligne à la fin (donc dans l'ordre)
-  //             }
-  //         });
-  //     }
-  // });
 
 
 
@@ -790,8 +753,7 @@ if ( $("#board").length != 0 ) {
   
 
   ///// FUNCTIONS
-  /// RESET TEXTAREA
-  /// ( USE ON SUBTASK TEXTAREA SUBMIT )
+  /// ALERTE + CONSOLE
   function alb(message, active) {
     if (adebug_active=="oui" && active!="off") alert(message);
   }
@@ -799,6 +761,8 @@ if ( $("#board").length != 0 ) {
     if (adebug_active=="oui" && active!="off") console.log(message);
   }
 
+  /// RESET TEXTAREA
+  /// ( USE ON SUBTASK TEXTAREA SUBMIT )
   function reset_textarea($message, $form, context, taskId, subtaskId) {
     // alb("reset_textarea == "+$message)
     var $textarea = $form.find("textarea");
@@ -842,7 +806,8 @@ if ( $("#board").length != 0 ) {
           //// RESET ( ok final preview )
           let md_due_description= marked.parse(due_description)
           let md_title= marked.parse(title)
-          $formform.append('<span class="wrap_desc tmp_modified 0">'+md_due_description+'</span>');
+          $formform.find(".wrap_desc").html(md_due_description);
+          $($formform).find(".original").remove()
           $titltitle.html('<span class="title_text">'+md_title.replace(/\n$/,"").replace(/---/,"\n")+'</span>');
 
           var $button = $form.parent().find(".submit_sub_desc_edit");
@@ -869,7 +834,8 @@ if ( $("#board").length != 0 ) {
     } else {
     //// DESC
       // alb("desc")
-      $form.append('<span class="wrap_desc tmp_modified 0">'+html+'</span>');
+      $form.find(".wrap_desc").html(html);
+      $($form).find(".original").remove()
       // alb($form.parent().attr("class"))
       var $button = $form.parent().find(".submit_sub_desc_edit");
       $button.remove();
@@ -878,7 +844,7 @@ if ( $("#board").length != 0 ) {
 
     $textarea.remove();
 
-
+    // RELOAD/DO READY to start textarea
     setTimeout(function () {
       // alb("re.init sub_dec_clic")
       /////// RE.INIT  SUBTASK CLICK -> TEXTAREA...
@@ -890,6 +856,7 @@ if ( $("#board").length != 0 ) {
 
 
 
+  
 
 
 
@@ -1105,6 +1072,8 @@ if ( $("#board").length != 0 ) {
       } // subt_td not exist ?
     }); /// task-board ( no sub overlay )
 
+    reset_cible_on_escape();
+
   }) //// CIBLE
 
 
@@ -1280,7 +1249,98 @@ $('.task-board').each(function() {
   
 
 
-  
+  // Ajout : reset_textarea_on_escape
+  var escapeListenerAdded = false;
+  function reset_textarea_on_escape() {
+    if (escapeListenerAdded) return;
+    escapeListenerAdded = true;
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+
+        $('.desc_please').each(function() {
+          // alb($(".desc_please").length)
+          var $parent = $(this).parent();
+          // alb($parent.attr("class"))
+          var $textarea = $parent.find('textarea');
+          var $subDesc = $parent.closest('.sub_desc');
+          var taskId = $subDesc.data('taskid');
+          var subtaskId = $subDesc.data('subid');
+          // alb("ok");
+          if (!taskId || !subtaskId) csl("error");
+          // Appel AJAX pour récupérer le texte d'origine
+          $.ajax({
+            url: "/assets/php/get_subdescription.php",
+            type: "POST",
+            dataType: "json",
+            data: {
+              task_id: taskId,
+              subtask_id: subtaskId,
+              what: "due_description"
+            },
+            success: function(response) {
+              // csl(response.due_description)
+              var md_due_description = response.due_description ? marked.parse(response.due_description) : '';
+
+              var linkified = linkify(md_due_description);
+
+              // Supprime la textarea et affiche le texte d'origine
+              $textarea.remove();
+              // On cherche ou insérer le texte :
+              if ($parent.find('.wrap_desc').length) {
+                $parent.find('.wrap_desc').remove();
+              }
+              let html_original=$parent.find('.original').html().trim().replace('<div class="original">','').replace("</div>","")
+
+
+              $parent.append(html_original);
+              $parent.removeClass('textarea_active');
+              // On retire aussi le bouton si présent
+              $parent.find('.sub_task_title_only_button, .submit_sub_desc_edit').remove();
+
+              $parent.find('.wrap_desc').addClass("after_escape")
+              $parent.find('.original,.submit_sub_desc_edit').remove()
+              $parent.parent().find('.submit_sub_desc_edit').remove()
+              // $(this).remove()
+            },
+            error: function(xhr) {
+              alb("Erreur AJAX : " + xhr.statusText);
+            }
+          });
+
+          // $parent.removeClass("active")
+          // alb("stop")
+        });
+      }
+    }, true); // <--- true active la capture
+
+  }  
+
+  function linkify(text) {
+    return text.replace(
+      /(\bhttps?:\/\/[^\s<]+)/gi,
+      '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+    );
+  }
+
+
+  var escapeCibleListenerAdded = false;
+  function reset_cible_on_escape() {
+    if (escapeCibleListenerAdded) return;
+    escapeCibleListenerAdded = true;
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        // Supprimer les classes ajoutées
+        $('.clicked_parent').removeClass('clicked_parent');
+        $('.first_clic_origine').removeClass('first_clic_origine');
+        // Supprimer les overlays ajoutés
+        $('.subt_overlay').remove();
+        // Optionnel : retirer la classe d’attente
+        $('html').removeClass('wait_clic');
+        // Optionnel : reset d’autres effets visuels si besoin
+      }
+    }, true);
+  }
 
 
 } ///// IF ( $("#board").length != 0 ) {
+
