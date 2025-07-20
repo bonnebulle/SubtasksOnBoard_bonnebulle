@@ -1163,7 +1163,7 @@ $('.task-board').each(function() {
       let tascount=1
       results.forEach(result => {
         /// FIRST
-        if (tascount==1) clip_text+="\n\n"+tascount+" ========================\n\n";
+        if (tascount==1) clip_text+="\n\n"+tascount+" ======================== "+Number(tascount)+"/"+Number(tasktotal)+"\n\n";
         
         /// TEXT
         clip_text += result;
@@ -1172,7 +1172,7 @@ $('.task-board').each(function() {
         // NORMAL
         if ((tascount>1) && (tascount!=tasktotal+1)) clip_text+="\n\n"+tascount+" ====================\ \n\n";
         // LAST
-        if (tascount==tasktotal+1) clip_text += "\n\n===========================\n\n\n";
+        if (tascount==tasktotal+1) clip_text += "\n\n=========================== "+Number(tascount-1)+"/"+Number(tasktotal)+"\n\n\n";
       });
 
       /// INFOS
