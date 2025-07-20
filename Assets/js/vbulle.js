@@ -209,7 +209,7 @@ if ( $("#board").length != 0 ) {
   });
 
 
-
+  /// Butun drag tasks
   $(".task-board-header").each(function () {
     let dragme='<i class="fa fa-hand-paper-o header_task" aria-hidden="true" onclick=""></i>';
     $(this).append(dragme)
@@ -266,10 +266,10 @@ if ( $("#board").length != 0 ) {
         toggle_save_checkboxs($this, $desc, task_id, subtask_id)
 
       });
+
     });
   }
 
-  // var coco=coco_hide=0
   /// SHOW/HIDE ALL
   $(document).on("click", ".all_toggle", function(e) {
     e.preventDefault();
@@ -374,8 +374,18 @@ if ( $("#board").length != 0 ) {
   }
 
   // VBULLE SUBTASK on clic +
-  function sub_title_clic() {
+  function sub_title_clic(context) {
     // alb("sub_dec_clic")
+
+    setTimeout(function () {
+
+      $(".sub_desc.sub_desc_title").each(function () {
+        $(this).removeClass("loading")
+      })
+      
+    },900);
+
+
     // alb($('.sub_desc').length)
 
     // SUBTASK TITLE -> TEXTAREA -> PHP MAJ DUE_DESCRIPTION
@@ -670,21 +680,22 @@ if ( $("#board").length != 0 ) {
   })
 
 
-  ///// DRAGNDROP
-  $(".table-suboncard tbody").sortable({
-      forcePlaceholderSize: true,
-      handle: ".drame", 
-      helper: function (e, ui) {
-          ui.children().each(function () {
-              $(this).width($(this).width());
-          });
-          return ui;
-      },
-      stop: function (event, ui) {
-        var subtask = ui.item;
-        let order = [];
-        let current_table=$(subtask).parent("tbody")
-        let task_id=$(subtask).find(".sub_desc").attr("data-taskid")
+  ///// DRAGNDROP subtasks
+  function drame_subtasks(message, context) {
+    $(".table-suboncard tbody").sortable({
+        forcePlaceholderSize: true,
+        handle: ".drame", 
+        helper: function (e, ui) {
+            ui.children().each(function () {
+                $(this).width($(this).width());
+            });
+            return ui;
+        },
+        stop: function (event, ui) {
+          var subtask = ui.item;
+          let order = [];
+          let current_table=$(subtask).parent("tbody")
+          let task_id=$(subtask).find(".sub_desc").attr("data-taskid")
 
         $(current_table).find(".subt_tr").each(function(index) {
           index++
@@ -711,14 +722,13 @@ if ( $("#board").length != 0 ) {
           }
         }); // AJAX
 
-      }, /// STOP_END dragndrop
-      start: function (event, ui) {
-          ui.item.addClass("draggable-item-selected");
-      }
-
-
-  }).disableSelection();
-
+        }, /// STOP_END dragndrop
+        start: function (event, ui) {
+            ui.item.addClass("draggable-item-selected");
+        }
+    }).disableSelection();
+  };
+  
   
   $(".task-board-icons").each(function() {
     let thisis=$(this)
@@ -740,12 +750,6 @@ if ( $("#board").length != 0 ) {
     })
   })
 
-  // $(".table-suboncard").each(function() {
-    // alb($(this).attr("data-have_desc"))
-    // if ($(this).attr("data-have_desc")) {
-// 
-    // }
-  // })
 
 
 
@@ -898,11 +902,12 @@ if ( $("#board").length != 0 ) {
 
 
   //// MV SUB TASKS
-  $(".cible").on("click", function(e) {
-    let delay_before_reload_page = 900
-    let clicli=0
-    e.preventDefault();
-    e.stopPropagation();
+  function cibles(message, context) {
+    $(".cible").on("click", function(e) {
+      let delay_before_reload_page = 900
+      let clicli=0
+      e.preventDefault();
+      e.stopPropagation();
 
     $('html').addClass('wait_clic');
     // Ajoute les overlays si besoin
@@ -1074,7 +1079,9 @@ if ( $("#board").length != 0 ) {
 
     reset_cible_on_escape();
 
-  }) //// CIBLE
+    }) //// CIBLE
+  } /// cibles
+  cibles()
 
 
 
@@ -1205,6 +1212,9 @@ $('.task-board').each(function() {
   })
 
 }) //// task-board
+
+
+
 
 
   ///// TEXTAREA AUTO HEIGHT
