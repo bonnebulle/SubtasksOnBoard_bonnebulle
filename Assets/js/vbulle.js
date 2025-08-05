@@ -206,9 +206,14 @@ if ( $("#board").length != 0 ) {
     setTimeout(function () {           
       highlightTaskById();
     },100);
+
+    $(".quick_swimlane").after("<span class='toggle_showall'><i class='fa fa-eye'></i></span>")
+
   });
 
 
+
+  
   /// Butun drag tasks
   $(".task-board-header").each(function () {
     let dragme='<i class="fa fa-hand-paper-o header_task" aria-hidden="true" onclick=""></i>';
@@ -226,7 +231,7 @@ if ( $("#board").length != 0 ) {
   /// INIT TOGGLE
   initToggleSubDesc("mess");
 
-  function initToggleSubDesc(mess) {
+  function initToggleSubDesc(mess, action) {
     // alb("initToggleSubDesc== "+mess)
 
     /// SHOW/HIDE SUBTASK (checkboxs) toggles
@@ -279,9 +284,6 @@ if ( $("#board").length != 0 ) {
     var $desc=$task_wrp.find(".sub_desc")
     let $checkbox= $desc.find(".toggle_sub_desc_checkbox")
     let $checkbox_a= $task_wrp.find(".toggle_sub_desc_a")
-
-
-    // alb($desc.length)
     
     if ($this.is(".active")) {
       $checkbox.prop("checked", false);
@@ -313,20 +315,33 @@ if ( $("#board").length != 0 ) {
           $desc.addClass("active")
           $($this).addClass("active")
         }
-
         // alb(checkis)
         /// GET LOCAL SHOW/HIDE chekbox 1
         localStorage.setItem("sub_desc_checkbox_"+task_id+"_"+subtask_id, checkis);
-
       },10);
 
     })
-    // if (coco_hide == coco) {
-    //   $this.closest(".all_toggle").removeClass("active")
-    //   alb("yes")
-    // }
 
   })
+
+
+  $(document).on("click", ".toggle_showall", function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // On veut savoir si on doit tout ouvrir ou tout fermer
+    // On prend l’état du premier bouton comme référence
+    let anyActive = $(".toggle_sub_desc_a").first().hasClass("active");
+
+    $(".toggle_sub_desc_a").each(function() {
+      // On ne clique que si l’état n’est pas celui désiré
+      if (anyActive && $(this).hasClass("active")) {
+        $(this).click();
+      } else if (!anyActive && !$(this).hasClass("active")) {
+        $(this).click();
+      }
+    });
+  });
 
 
   ////////////
@@ -1446,6 +1461,7 @@ if ( $("#board").length != 0 ) {
     }
     $(this).find(".sub_task_title_only").before("<span class='count_caracter_desc "+longeure+"'>"+fulltxt+"</span>")
   })
+
 
 
 } ///// IF ( $("#board").length != 0 ) {
