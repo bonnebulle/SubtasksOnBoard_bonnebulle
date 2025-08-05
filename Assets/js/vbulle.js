@@ -174,7 +174,7 @@ if ( $("#board").length != 0 ) {
 
         // 2. Après un petit délai, ajuste le scroll horizontal
         setTimeout(function() {
-          window.scrollBy({ top: -80, left: -20, behavior: 'smooth' });
+          window.scrollBy({ top: -80, left: -20, behavior: 'auto' });
         }, 100);
       }  
     }
@@ -195,7 +195,7 @@ if ( $("#board").length != 0 ) {
 
       // 2. Après un petit délai, ajuste le scroll horizontal
       setTimeout(function() {
-        window.scrollBy({ top: -90, left: -20, behavior: 'smooth' });
+        window.scrollBy({ top: -90, left: -20, behavior: 'auto' });
       }, 100);
 
     }
@@ -413,10 +413,10 @@ if ( $("#board").length != 0 ) {
       $this.find(".title_text").remove()
 
       /// AUTO HEIGHT
-      autoResizeTextarea($textarea[0]);
-      $textarea.on('input', function() {
-        autoResizeTextarea(this);
-      });
+      // autoResizeTextarea($textarea[0]);
+      // $textarea.on('input', function() {
+      //   autoResizeTextarea(this);
+      // });
 
 
 
@@ -527,7 +527,7 @@ if ( $("#board").length != 0 ) {
                 // Optionnel : remettre le texte initial au blur
                 var $form = $subDesc;
                 ///// END -> DO
-                reset_textarea("success onclick",$form)
+                reset_textarea("success onclick",$form, "duedescription", taskId, subtaskId)
                 $form.find('.wrap_desc').addClass("after_escape")
                 $($form).find(".original").remove()
             },
@@ -778,6 +778,7 @@ if ( $("#board").length != 0 ) {
     var newText = $textarea.val();
     // alb("taskId == "+taskId)
     // alb("subtaskId == "+subtaskId)
+    // alb("$message == "+$message)
 
     // LOAD marked JS --> 
     // app/Template/layout.php
@@ -841,6 +842,7 @@ if ( $("#board").length != 0 ) {
     //// DESC
       // alb("desc")
       // setTimeout(function () {  
+      // alb(taskId + " - " + subtaskId)
           $.ajax({
             url: "/assets/php/get_subdescription.php",
             type: "POST",
@@ -854,7 +856,8 @@ if ( $("#board").length != 0 ) {
               // alert("ff - "+response.due_description)
 
               let due_description=response.due_description;
-              let due_description_checked = (due_description=="vide") ? html_new_desc : due_description;
+              let html_new_desc_fix = (html_new_desc=="vide") ? "" : html_new_desc;
+              let due_description_checked = (due_description=="vide") ? html_new_desc_fix : due_description;
               let due_description_fixed = due_description_checked.replace(/\n+$/,"").replace(/---/,"\n")
               // var mdpls = marked.parse(due_description_fixed);
 
@@ -941,13 +944,7 @@ if ( $("#board").length != 0 ) {
     //   ////////
     // },400);
     
-  }
-
-
-
-  
-
-
+  } /// DESC + TITLE
 
 
   //// SAVE TOGGLE SHOW/HIDE
@@ -977,7 +974,7 @@ if ( $("#board").length != 0 ) {
 
   }
 
-
+  /// DESC VIDE
   $(".description-inside-task").each(function() {
     if ($(this).find("p").length == 0) {
       // alb("yes")
@@ -1173,136 +1170,129 @@ if ( $("#board").length != 0 ) {
 
 
 
+  /// CLIPALL infos date French
+  const mois = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre" ]
+  function frenchTodayDate() {
 
-const mois = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre" ]
+    let today = new Date();
+    let year = today.getFullYear()
+    let dayNumber = today.getDate()
+    let month = mois[today.getMonth()]
+    let weekday = today.toLocaleDateString("fr-FR", { weekday: "long" });
 
-function frenchTodayDate() {
+    return { weekday, dayNumber, month, year }
+  }
 
-  let today = new Date();
-  let year = today.getFullYear()
-  let dayNumber = today.getDate()
-  let month = mois[today.getMonth()]
-  let weekday = today.toLocaleDateString("fr-FR", { weekday: "long" });
-
-  return { weekday, dayNumber, month, year }
-}
-// console.log(frenchTodayDate())
-//=> { weekday: 'mercredi', dayNumber: 12, month: 'octobre', year: 2022 }
-
-
-$('.task-board').each(function() {
-  const thiis = $(this)
-
-  
+  $('.task-board').each(function() {
+    const thiis = $(this)
 
 
-
-  /// ADD cpclip_all button
-  $(thiis).find(".rm_task_quickaction").before("\
-  <a class='cpclip_all' onclick=''> \
-      <i class='fa fa-clipboard'></i> \
-  </a>")
-
-
-  var host = window.location.host; 
-  var proto = window.location.protocol; 
-  var data_task_id = $(this).attr("data-task-id")
-  var data_project_id = $(this).attr("data-project-id")
-  /// ADD plink_sub_task button
-  $(thiis).find(".rm_task_quickaction").before("\
-    <a class='plink_sub_task' href='"+proto+"//"+host+"/?controller=BoardViewController&action=show&project_id="+data_project_id+"&data-task-id="+data_task_id+"'> \
-        <i class='fa fa-link'></i> \
+    /// ADD cpclip_all button
+    $(thiis).find(".rm_task_quickaction").before("\
+    <a class='cpclip_all' onclick=''> \
+        <i class='fa fa-clipboard'></i> \
     </a>")
 
 
+    var host = window.location.host; 
+    var proto = window.location.protocol; 
+    var data_task_id = $(this).attr("data-task-id")
+    var data_project_id = $(this).attr("data-project-id")
+    /// ADD plink_sub_task button
+    $(thiis).find(".rm_task_quickaction").before("\
+      <a class='plink_sub_task' href='"+proto+"//"+host+"/?controller=BoardViewController&action=show&project_id="+data_project_id+"&data-task-id="+data_task_id+"'> \
+          <i class='fa fa-link'></i> \
+      </a>")
 
 
-  $(thiis).find(".cpclip_all").on("click", function(e) {
-    e.preventDefault();
-    e.stopPropagation();
 
-    let today = new Date(),
-    time = today.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-    
-    let clip_text = "";
-    let promises = [];
 
-    let projet_name = $(thiis).attr("data-projet-name");
-    let swimlane_name = $(thiis).attr("data-swimlane-name");
-    
-    clip_text += projet_name + " > ";
-    clip_text += swimlane_name + " > ";
-    clip_text += "\nTâche n° : " + $(thiis).find(".task-board-title a").attr("href").replace("\/?","").replace("controller=TaskViewController&action=show&task_id=","") + "\n"
+    $(thiis).find(".cpclip_all").on("click", function(e) {
+      e.preventDefault();
+      e.stopPropagation();
 
-    clip_text += "---------\n\n"
-    /// TITRE DESC
-    clip_text += "# "
-    clip_text += md( $(thiis).find(".task-board-title a").text() ) + "\n"
-    clip_text += md( $(thiis).find(".description-inside-task").html() ) + "\n"
-    
+      let today = new Date(),
+      time = today.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+      
+      let clip_text = "";
+      let promises = [];
 
-    let tasktotal=$(thiis).find('.subt_tr').length
-    /// SUB TASKS
-    $(thiis).find('.subt_tr').each(function() {
-      let id = $(thiis).attr("data-task-id");
-      let subid = $(this).find("[data-subtask_id]").attr("data-subtask_id");
-      // On stocke la Promise dans un tableau
-      promises.push(cpclip_subtasks(id, subid)); /// Utilisé par async (Ajax needed)
-    });
+      let projet_name = $(thiis).attr("data-projet-name");
+      let swimlane_name = $(thiis).attr("data-swimlane-name");
+      
+      clip_text += projet_name + " > ";
+      clip_text += swimlane_name + " > ";
+      clip_text += "\nTâche n° : " + $(thiis).find(".task-board-title a").attr("href").replace("\/?","").replace("controller=TaskViewController&action=show&task_id=","") + "\n"
 
-    Promise.all(promises).then(results => {
+      clip_text += "---------\n\n"
+      /// TITRE DESC
+      clip_text += "# "
+      clip_text += md( $(thiis).find(".task-board-title a").text() ) + "\n"
+      clip_text += md( $(thiis).find(".description-inside-task").html() ) + "\n"
+      
 
-      let tascount=1
-      results.forEach(result => {
-        /// FIRST
-        if (tascount==1) clip_text+="\n\n"+tascount+" ======================== "+Number(tascount)+"/"+Number(tasktotal)+"\n\n";
-        
-        /// TEXT
-        clip_text += result;
-
-        tascount++
-        // NORMAL
-        if ((tascount>1) && (tascount!=tasktotal+1)) clip_text+="\n\n"+tascount+" ====================\ \n\n";
-        // LAST
-        if (tascount==tasktotal+1) clip_text += "\n\n=========================== "+Number(tascount-1)+"/"+Number(tasktotal)+"\n\n\n";
+      let tasktotal=$(thiis).find('.subt_tr').length
+      /// SUB TASKS
+      $(thiis).find('.subt_tr').each(function() {
+        let id = $(thiis).attr("data-task-id");
+        let subid = $(this).find("[data-subtask_id]").attr("data-subtask_id");
+        // On stocke la Promise dans un tableau
+        promises.push(cpclip_subtasks(id, subid)); /// Utilisé par async (Ajax needed)
       });
 
-      /// INFOS
-      const capitalize = ([first,...rest]) => first.toUpperCase() + rest.join('').toLowerCase();
-      const {weekday, dayNumber, month, year} = frenchTodayDate()
-      const aujourdhui = `${capitalize(weekday)}, le ${dayNumber} ${month} ${year}`
+      Promise.all(promises).then(results => {
 
-      /// LAST if no subtasks
-      if (tasktotal==0) clip_text+="\n\n========================\n\n";
+        let tascount=1
+        results.forEach(result => {
+          /// FIRST
+          if (tascount==1) clip_text+="\n\n"+tascount+" ======================== "+Number(tascount)+"/"+Number(tasktotal)+"\n\n";
+          
+          /// TEXT
+          clip_text += result;
 
-      clip_text += "Infos :\n"
-      clip_text += aujourdhui + " -- " + time;
-      clip_text += "\n. . .";
+          tascount++
+          // NORMAL
+          if ((tascount>1) && (tascount!=tasktotal+1)) clip_text+="\n\n"+tascount+" ====================\ \n\n";
+          // LAST
+          if (tascount==tasktotal+1) clip_text += "\n\n=========================== "+Number(tascount-1)+"/"+Number(tasktotal)+"\n\n\n";
+        });
 
-      let projet_id = $(thiis).attr("data-project-id")
-      let task_id = $(thiis).attr("data-task-id")
-      var host = window.location.host; 
-      var proto = window.location.protocol; 
-      let permal = proto + "//" + host + "/?controller=BoardViewController&action=show&project_id=" + projet_id + "&data-task-id=" + task_id
-      clip_text += "\n" + permal;
+        /// INFOS
+        const capitalize = ([first,...rest]) => first.toUpperCase() + rest.join('').toLowerCase();
+        const {weekday, dayNumber, month, year} = frenchTodayDate()
+        const aujourdhui = `${capitalize(weekday)}, le ${dayNumber} ${month} ${year}`
 
-      // Ici, tu peux utiliser clip_text (copie, alert, etc.)
-      navigator.clipboard.writeText(clip_text).then(() => {
-        alert(clip_text);
-      }).catch(err => {
-        alert('Erreur lors de la copie : ' + err);
+        /// LAST if no subtasks
+        if (tasktotal==0) clip_text+="\n\n========================\n\n";
+
+        clip_text += "Infos :\n"
+        clip_text += aujourdhui + " -- " + time;
+        clip_text += "\n. . .";
+
+        let projet_id = $(thiis).attr("data-project-id")
+        let task_id = $(thiis).attr("data-task-id")
+        var host = window.location.host; 
+        var proto = window.location.protocol; 
+        let permal = proto + "//" + host + "/?controller=BoardViewController&action=show&project_id=" + projet_id + "&data-task-id=" + task_id
+        clip_text += "\n" + permal;
+
+        // Ici, tu peux utiliser clip_text (copie, alert, etc.)
+        navigator.clipboard.writeText(clip_text).then(() => {
+          alert(clip_text);
+        }).catch(err => {
+          alert('Erreur lors de la copie : ' + err);
+        });
       });
-    });
 
-  })
+    })
 
-}) //// task-board
-
+  }) //// task-board
 
 
 
 
-  ///// TEXTAREA AUTO HEIGHT
+
+  ///// TEXTAREA AUTO HEIGHT (depreciated)
   function autoResizeTextarea(textarea) {
     textarea.style.height = 'auto'; // Réinitialise d'abord la hauteur
     textarea.style.height = (textarea.scrollHeight + 4) + 'px'; // Ajuste à la hauteur du contenu (+10px)
@@ -1421,7 +1411,7 @@ $('.task-board').each(function() {
     );
   }
 
-
+  /// ESCAPE CIBLE
   var escapeCibleListenerAdded = false;
   function reset_cible_on_escape() {
     if (escapeCibleListenerAdded) return;
@@ -1439,6 +1429,23 @@ $('.task-board').each(function() {
       }
     }, true);
   }
+
+  $('.subt_tr').each(function() {
+    let fulltxt = $(this).find(".wrap_desc").text().length
+    // alert(fulltxt)
+    let longeure;
+    switch (true) {
+      case (fulltxt < 600):
+        longeure = "court";
+        break;
+      case (fulltxt < 800):
+        longeure = "normal";
+        break;
+      default:
+        longeure = "long";
+    }
+    $(this).find(".sub_task_title_only").before("<span class='count_caracter_desc "+longeure+"'>"+fulltxt+"</span>")
+  })
 
 
 } ///// IF ( $("#board").length != 0 ) {

@@ -11,9 +11,9 @@
 
 .drame.ui-sortable-handle {
   float: right;
-  margin-left: 14px;
+  margin-left: 10px;
   margin-top: 1px;
-  margin-right: -4px;
+  margin-right: 0px;
 }
 .edit_subtask i:not(.fa-window-minimize) {
   width: 12px;
@@ -537,6 +537,19 @@ table th,
 {
  text-align: justify;  hyphens: auto;
  display: inline-block;
+}
+html #board-container table.table-suboncard :is(li) {
+  max-width: calc(100% - 35px);
+}
+html #board-container table.table-suboncard :is(p) {
+  max-width: calc(100% - 13px);
+}
+html #board-container table.table-suboncard img {
+  max-width: 100%;
+}
+
+textarea.desc_please {
+  overflow-x: hidden;
 }
 
 /* .markdown.description-inside-task { */
@@ -1883,4 +1896,128 @@ html #board-container table.table-suboncard tr {
 .board-swimlane-header {
   flex: 1 1 100%;
   width: 100% !important;
+}
+
+.count_caracter_desc {
+  float: right;
+  position: absolute;
+  margin-left: -30px;
+  text-align: right;
+  width: 30px;
+  font-size: 10px;
+  pointer-events: none;
+  opacity: 0.9;
+  margin-top: -2px;
+}
+
+.count_caracter_desc.normal {
+  color: #d8a600;
+  opacity: 1;
+  font-weight: bold;
+}
+.count_caracter_desc.long {
+  color: #d80000;
+  opacity: 0.8;
+  font-weight: bold;
+}
+
+
+
+
+@media (max-width: 480px) {
+
+/* Inline | https://kb.vincent-bonnefille.fr/?controller=BoardViewController&action=show&project_id=1 */
+
+.project-header {
+  width: 100%;
+  display: block;
+  float: none;
+  position: relative;
+  margin-top: -32px;
+  max-width: none;
+}
+
+/* .dropdown-component {
+  position: relative;
+  top: 50px;
+} */
+
+header .title-container {
+  overflow: ;
+  order: 0;
+  min-width: 250px;
+}
+
+.board-selector-container {
+  order: 3 !important;
+  right: 12px;
+  right: 10px !important;
+  top: -7px;
+}
+
+.project-header .views li {
+  overflow: hidden;
+}
+
+html body header div.title-container div.project-header div.dropdown-component div.dropdown a.dropdown-menu.action-menu {
+  margin-left: auto;
+  float: right;
+  margin-top: -3px;
+  display: block;
+  left: -6px;
+  position: ;
+  top: 13px;
+}
+
+html body header div.title-container div.project-header div.filter-box-component {
+  width: 220px;
+  margin-top: -37px;
+  margin-right: -130px;
+}
+
+header .menus-container {
+  margin-left: auto !important;
+  order: 1 !important;
+  float: right !important;
+  display: inherit;
+  float: right;
+}
+
+body > header:nth-child(1) {
+  position: relative;
+  height: 130px;
+}
+
+
+.project-header .dropdown-component {
+  top: 70px;
+  right: -80px;
+}
+.project-header > .dropdown-component:first-child {
+  top: 24px;
+  right: -220px;
+  width: 150px;
+}
+
+.project-header .views-switcher-component {
+  /* margin-left: 20px; */
+  /* margin-right: 10px; */
+  margin-left: -60px;
+  width: auto;
+  max-width: none;
+}
+
+header .board-selector-container {
+  order: 2;
+  top: -46px;
+}
+.project-header .views-switcher-component {
+  width: 370px;
+  margin-right: -90px !important;
+  margin-left: -165px;
+  margin-top: -3px !important;
+  margin-bottom: 44px !important;
+}
+
+
 }
