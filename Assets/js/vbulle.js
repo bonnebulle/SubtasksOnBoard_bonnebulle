@@ -97,7 +97,25 @@ if ( $("#board").length != 0 ) {
   ///// swimlane
   /// butuns pls
   var projectId = $(".page").attr("data-project_id")
-  $("a.board-swimlane-toggle").after("<span class='quick_swimlane'> \
+  /// WRAP
+  $("a.board-swimlane-toggle").wrap("<span class='board-swimlane-toggle-wrapper'></span>")
+  
+  /// MOVE WRAPPER after count (clone then remove original)
+  $("a.board-swimlane-toggle").each(function() {
+    var $originalWrapper = $(this).closest("span.board-swimlane-toggle-wrapper");
+    if ($originalWrapper.length) {
+      var $header = $originalWrapper.closest("th.board-swimlane-header");
+      var $count = $header.find(".board-column-header-task-count").first();
+      if ($count.length) {
+        var $clone = $originalWrapper.clone(true, true);
+        $count.after($clone);
+        $originalWrapper.remove();
+      }
+    }
+  });
+
+  //// ADD
+  $("span.board-swimlane-toggle-wrapper").append("<span class='quick_swimlane'> \
     <a title='Modifier Swimelines' href='/?controller=SwimlaneController&action=index&project_id="+projectId+"'> \
        <i class='fa fa-align-justify' aria-hidden='true'></i>  \
     </a> \
@@ -105,6 +123,14 @@ if ( $("#board").length != 0 ) {
        <i class='fa fa fa-columns' aria-hidden='true'></i>  \
     </a> \
     </span>")
+
+    $(".board-swimlane-header").each(function() {
+    if ($(this).children(".board-swimlane-header-wrapper").length === 0) {
+      $(this).wrapInner("<span class='board-swimlane-header-wrapper'></span>");
+    }
+  })
+  
+
 
   // TAGS CLICK -> SEARCH FILTER
   $(".task-tag a").each(function (e) {
@@ -1446,10 +1472,17 @@ if ( $("#board").length != 0 ) {
   }
 
   $('.subt_tr').each(function() {
-    let fulltxt = $(this).find(".wrap_desc").text().length
+
+    
+    let fulltxt_l = $(this).find(".wrap_desc").text().trim().length
+    let fulltxt = ( $(this).find(".wrap_desc").text().trim() == "vide" ) ? 0 : fulltxt_l;
+    
     // alert(fulltxt)
     let longeure;
     switch (true) {
+      case (fulltxt == 0):
+        longeure = "vide";
+        break;
       case (fulltxt < 600):
         longeure = "court";
         break;

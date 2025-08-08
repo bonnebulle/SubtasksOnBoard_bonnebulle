@@ -1564,8 +1564,7 @@ a:is(.js-modal-large, .js-modal-medium, .all_toggle):hover .fa  {
 .edit_subtask {
   opacity: 0;
 }
-.subt_tr:hover 
-.edit_subtask {
+.subt_tr:hover .edit_subtask {
   opacity: 1;
 }
 
@@ -1920,11 +1919,14 @@ html #board-container table.table-suboncard tr {
   opacity: 0.8;
   font-weight: bold;
 }
+.count_caracter_desc.vide {
+  display: none;
+}
 
 
 
-
-@media (max-width: 480px) {
+/* @media (max-width: 480px) { */
+@media (max-width: 1200px) {
 
 /* Inline | https://kb.vincent-bonnefille.fr/?controller=BoardViewController&action=show&project_id=1 */
 
@@ -2018,12 +2020,65 @@ header .board-selector-container {
   margin-top: -3px !important;
   margin-bottom: 44px !important;
 }
+.subt_tr .edit_subtask {
+  opacity: 1;
+}
+
+.markdown.description-inside-task.vide + .dropdown-submenu-open_alt {
+  margin-top: -23px;
+}
+.markdown.description-inside-task.vide + .dropdown-submenu-open_alt + .all_toggle_wraper > .all_toggle {
+  top: 6px;
+}
+.toggle_sub_desc_a i::before,
+.fa {
+  font-size: 23px !important;
+  width: auto !important;
+}
+
+
+/* vbulle_kanboard.css | https://kb.vincent-bonnefille.fr/assets/css/vbulle_kanboard.css?1754588700 */
+
+.toggle_sub_desc_a {
+  /* width: 20px; */
+  /* margin-left: 2px; */
+  width: auto;
+  margin-left: 5px;
+}
+
+.toggle_sub_desc_a i::before {
+  /* padding-right: 14px !important; */
+  /* left: -7px; */
+  padding-right: 2px !important;
+  left: 2px;
+  top: -3px;
+}
 
 
 }
+/* //// MEDIAQUERY END ////// */
+
+
 
 .toggle_showall i:before {
   font-family: FontAwesome;
   /* content: '\f02b'; */
   color: #5755d9;
+  cursor:pointer;
+}
+
+.board-swimlane-header-wrapper
+/* .board-swimlane-toggle-wrapper */
+ {
+  position: sticky;
+  top: 0; /* ou la valeur souhaitée */
+  left: 0; /* pour le positionnement horizontal */
+  z-index: 1000;
+  padding-left: 0.5rem;
+}
+.board-swimlane-header {
+  padding-left: 0
+}
+.board-swimlane-toggle-wrapper {
+  padding-left: 0.5em;
 }
