@@ -2082,3 +2082,12 @@ header .board-selector-container {
 .board-swimlane-toggle-wrapper {
   padding-left: 0.5em;
 }
+
+html #board-container table.table-suboncard .wrap_desc a {
+  white-space: nowrap;
+  display: inline-block;
+  max-width: 290px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1em;
+}
