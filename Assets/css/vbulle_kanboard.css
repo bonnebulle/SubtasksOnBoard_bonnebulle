@@ -1776,7 +1776,7 @@ tr.draggable-item-selected {
 }
 
 .wrap_desc h4 {
-  font-size: 0.1em;
+  font-size: 1.1em;
 }
 .wrap_desc h4:after {
   content: "h4"
