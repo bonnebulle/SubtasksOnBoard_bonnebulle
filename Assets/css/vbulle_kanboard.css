@@ -539,7 +539,8 @@ table th,
  display: inline-block;
 }
 html #board-container table.table-suboncard :is(li) {
-  max-width: calc(100% - 35px);
+  max-width: calc(100% - 22px);
+  text-align: left;
 }
 html #board-container table.table-suboncard :is(p) {
   max-width: calc(100% - 13px);
@@ -1736,8 +1737,65 @@ tr.draggable-item-selected {
 .wrap_desc :is(h1, h2, h3, h4, h5, h6) {
   font-size: 1.3em;
   padding: 0;
-  margin: 0;
+  margin-top: 20px;
+  margin-bottom: 8px;
 }
+.wrap_desc > :is(h1, h2, h3, h4, h5, h6):first-child {
+  margin-top: 0;
+}
+.wrap_desc :is(h1, h2, h3, h4, h5, h6):after {
+  font-size: inherit;
+  float: right;
+  padding-right: 10px;
+  opacity: 0;
+  /* position: absolute; */
+}
+.wrap_desc :is(h1, h2, h3, h4, h5, h6):hover:after {
+  opacity: 1;
+}
+
+.wrap_desc h1 {
+  font-size: 1.4em;
+}
+.wrap_desc h1:after {
+  content: "h1"
+}
+
+.wrap_desc h2 {
+  font-size: 1.3em;
+}
+.wrap_desc h2:after {
+  content: "h2"
+}
+
+.wrap_desc h3 {
+  font-size: 1.2em;
+}
+.wrap_desc h3:after {
+  content: "h3"
+}
+
+.wrap_desc h4 {
+  font-size: 0.1em;
+}
+.wrap_desc h4:after {
+  content: "h4"
+}
+
+.wrap_desc h5 {
+  font-size: 1em;
+}
+.wrap_desc h5:after {
+  content: "h5"
+}
+
+.wrap_desc h6 {
+  font-size: 1em;
+}
+.wrap_desc h6:after {
+  content: "h6"
+}
+
 
 .subt_tr {
   position: relative; /* pour que l'overlay soit positionné par rapport à .subt_tr */
