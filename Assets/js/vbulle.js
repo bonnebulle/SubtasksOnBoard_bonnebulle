@@ -373,14 +373,16 @@ if ( $("#board").length != 0 ) {
   ////////////
   //////////// AJAX
   ////////////
-  function ajax_this(subtaskId,taskId,newText,newTitle,$this,project_id, $title) {
+  function ajax_this(subtaskId,taskId,newText,newTitle,$this,project_id, $title, $context) {
 
    console.log("----" + taskId +
     "\nsubtaskId " + subtaskId +
     "\nnewText " + newText +
-    "\nnewTitle " + newTitle
-    // "\ntitle " + $title
+    "\nnewTitle " + newTitle +
+    "\ntitle " + $title +
+    "\context " + $context
   ) 
+
   ////// TITLE
     $.ajax({
       url: "/assets/php/change_subdescription.php",
@@ -389,8 +391,8 @@ if ( $("#board").length != 0 ) {
           task_id: taskId,
           subtask_id: subtaskId,
           title: newTitle,
-          text: newText
-          // title: $title
+          text: newText,
+          context: $context
           // csrf_token: csrf_token // si tu utilises le CSRF
       },
       success: function(response) {
@@ -480,7 +482,8 @@ if ( $("#board").length != 0 ) {
         e.preventDefault();
         e.stopPropagation();
         var newText = $(this).parent().find('textarea[name="text"]').val();
-        ajax_this(subtaskId,taskId,newText,"",$this,project_id,currentText)
+        // alb("000",on)
+        ajax_this(subtaskId,taskId,"",newText,$this,project_id,"title")
       
       }); /// END $('.submit_sub_desc_edit') ONCLICK SUBMIT BUTTON
 
@@ -504,7 +507,9 @@ if ( $("#board").length != 0 ) {
       var newText = $(this).find("textarea").val();
       // alb(taskId +" -- "+ subtaskId +" -- "+ newText)
       if (newText != "") {
-        ajax_this(subtaskId,taskId,newText,"",$this,project_id)
+        // alb("001",on)
+        // alert(newText)
+        ajax_this(subtaskId,taskId,"",newText,$this,project_id,"title")
       }
     }); /// SUBMIT
   } /// FUN sub_dec_clic
@@ -677,8 +682,8 @@ if ( $("#board").length != 0 ) {
         let newText = lines.slice(sepIndex + 1).join('\n').trim();
         // alb(newTitle)
         // alb(newText)
-
-        ajax_this(subtaskId,taskId,newText,newTitle,$form,project_id) // DESC !inversed_order==first
+        // alb("002",on)
+        ajax_this(subtaskId,taskId,newText,newTitle,$form,project_id,"all") // DESC !inversed_order==first
         // ajax_this(subtaskId,taskId,newText,"",$form,project_id) // DESC !inversed_order==first
 
         // alb("ok")
