@@ -3,10 +3,10 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-//   // Accès direct ou mauvaise méthode, on bloque
-//   die('Accès interdit.');
-// }
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+  // Accès direct ou mauvaise méthode, on bloque
+  die('Accès interdit.');
+}
 
 // Récupérer les paramètres depuis l'URL (GET) ou le formulaire (POST)
 $task_id = isset($_REQUEST['task_id']) ? intval($_REQUEST['task_id']) : null;
