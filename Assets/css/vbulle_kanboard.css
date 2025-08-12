@@ -113,7 +113,7 @@ z-index: 9999;
 width: 100%;
 height: 55px;
 }
-#select-dropdown-menu {
+header #select-dropdown-menu {
   right: 150px !important;
   left: auto !important;
   top: 38px !important;
@@ -1188,8 +1188,9 @@ html #board-container table.table-suboncard, html #board-container table.table-s
 }
 .text-editor textarea {
   width: 564px !important;
-  text-align: justify;
+  text-align: left;
   hyphens: auto;
+  overflow-x: hidden;
 }
 #modal-content #form-title {
   float: left !important;
@@ -2148,4 +2149,31 @@ html #board-container table.table-suboncard .wrap_desc a {
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1em;
+}
+
+.btn:focus, .btn:hover {
+  background: #7eff8c !important;
+  color: #000 !important;
+  border-color: #000 !important;
+}
+.btn.btn-red:focus, .btn.btn-red:hover {
+  background: #f74d4d !important;
+  color: #FFF !important;
+  border-color: #000 !important;
+}
+
+.form-actions a:focus {
+  background: #f7f14d !important; 
+}
+
+#modal-content p {
+  clear: both;
+}
+
+label[for="form-project_id"] {
+  background: yellow;
+}
+#modal-content .select-dropdown-input-container {
+  height: 2em;
+  clear: both;
 }

@@ -248,11 +248,37 @@ if ( $("#board").length != 0 ) {
 
 
   // VBULLE SUBTASK on clic +
-  $(document).on("click", ".dropdown-submenu-open_alt li a", function (e) {
+  $(document).on("click", ".dropdown-submenu-open_alt li a, .rm_task_quickaction, .editbutt", function (e) {
       e.preventDefault();
       let url=$(this).attr("href")
+      // alb("test")
       KB.modal.open(url, "medium", !0);
+      setTimeout(function () {
+        if ($("#form-title").length == 1) {
+          $("#form-title").attr("tabindex", "0")
+            $("#form-title").focus()
+            // alb("focus")
+        }
+        $('.select2-selection').attr("tabindex", "-1")
+      },400);  
+      setTimeout(function () {
+        $('select[name="user_id"], #form-time_estimated, #form-due_date, [name="another_subtask"]').attr("tabindex", "-1")
+        $('[name="due_description"], .btn.btn-blue').attr("tabindex", "1")
+        // .on('keydown', function(e){ if (e.keyCode == 9)  e.preventDefault() });
+      },200);
+      setTimeout(function () {
+      if ($("#modal-confirm-button").length == 1) {
+        $(".form-actions").find("#modal-confirm-button").focus()
+        $(".form-actions").find("a").addClass("keyboard-clickable").attr("tabindex", "0")
+        // alb("kkkk")
+      }
+
+      
+      },500);
+
   });
+  // js-modal-medium rmbutt
+
 
   /// INIT TOGGLE
   initToggleSubDesc("mess");
@@ -1499,6 +1525,7 @@ if ( $("#board").length != 0 ) {
     }
     $(this).find(".sub_task_title_only").before("<span class='count_caracter_desc "+longeure+"'>"+fulltxt+"</span>")
   })
+
 
 
 
