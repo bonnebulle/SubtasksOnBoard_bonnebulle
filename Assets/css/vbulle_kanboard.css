@@ -1244,7 +1244,7 @@ html #board-container table.table-suboncard, html #board-container table.table-s
   margin-right: -2px !important;
   margin-top: -8px !important;
   padding-top: 12px;
-  text-align: justify;
+  text-align: left;
   hyphens: auto;
 }
 .wrap_desc,
@@ -2176,4 +2176,9 @@ label[for="form-project_id"] {
 #modal-content .select-dropdown-input-container {
   height: 2em;
   clear: both;
+}
+
+.desc_please {
+  max-height: 70vh;
+  resize:none;
 }

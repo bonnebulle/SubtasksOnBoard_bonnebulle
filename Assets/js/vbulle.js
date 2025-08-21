@@ -438,9 +438,18 @@ if ( $("#board").length != 0 ) {
       }
     });
     
-
-
   }
+
+
+  // function preventMoving(e) {
+  //   var key = (e.keyCode ? e.keyCode : e.which);
+  //   if(key == 13) {
+  //       e.preventDefault();
+  //       // alert("ees")
+  //       // A
+  //   }
+  // }
+
 
   // VBULLE SUBTASK on clic +
   function sub_title_clic(context) {
@@ -483,9 +492,12 @@ if ( $("#board").length != 0 ) {
 
       /// AUTO HEIGHT
       // autoResizeTextarea($textarea[0]);
+      // alert("res")
       // $textarea.on('input', function() {
-      //   autoResizeTextarea(this);
+        // autoResizeTextarea(this);
       // });
+
+      
 
 
 
@@ -639,6 +651,8 @@ if ( $("#board").length != 0 ) {
             // console.log("OK due_description", response.title); 
 
             var $textarea = $('<textarea class="desc_please" name="text" tabindex="-1" placeholder="Markdown">').val(response.due_description);
+            // var $textarea = $('<textarea class="desc_please" name="text" tabindex="-1" placeholder="Markdown" onkeyup="preventMoving(event);">').val(response.due_description);
+
             
             var contenu = $wrap_desc.html();
             $wrap_desc.html("<div class='original'>" + contenu + "</div>");
@@ -647,6 +661,7 @@ if ( $("#board").length != 0 ) {
             $textarea.focus();
   
             // /// AUTO HEIGHT
+            // alert("kkk")
             autoResizeTextarea($textarea[0]);
             $textarea.on('input', function() {
               autoResizeTextarea(this);
@@ -845,6 +860,9 @@ if ( $("#board").length != 0 ) {
   /// RESET TEXTAREA
   /// ( USE ON SUBTASK TEXTAREA SUBMIT )
   function reset_textarea($message, $form, context, taskId, subtaskId) {
+
+    $("html").css("overflow", "hidden")
+    
     // alb("reset_textarea == "+$message, on)
     var $textarea = $form.find("textarea");
     var newText = $textarea.val();
@@ -1368,6 +1386,7 @@ if ( $("#board").length != 0 ) {
   function autoResizeTextarea(textarea) {
     textarea.style.height = 'auto'; // Réinitialise d'abord la hauteur
     textarea.style.height = (textarea.scrollHeight + 4) + 'px'; // Ajuste à la hauteur du contenu (+10px)
+    $("html").css("overflow", "hidden")
   }
   /////
 
@@ -1474,6 +1493,7 @@ if ( $("#board").length != 0 ) {
       }
     }, true); // <--- true active la capture
 
+    $("html").css("overflow", "auto")
   }  
 
   function linkify(text) {
