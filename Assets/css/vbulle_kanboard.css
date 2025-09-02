@@ -2139,7 +2139,8 @@ header .board-selector-container {
   padding-left: 0
 }
 .board-swimlane-toggle-wrapper {
-  padding-left: 0.5em;
+  padding-left: 0em;
+  padding-right: 0.6em;
 }
 
 html #board-container table.table-suboncard .wrap_desc a {
@@ -2181,4 +2182,34 @@ label[for="form-project_id"] {
 .desc_please {
   max-height: 70vh;
   resize:none;
+}
+
+/* app/Template/board/table_column.php */
+.fa.fa-info-circle.desc {
+  margin-left: 3px;
+  margin-right: 3px;
+  position: relative;
+  z-index: 99999;
+}
+.fa.fa-info-circle.desc span {
+  display: none;
+}
+.fa.fa-info-circle.desc:hover span {
+  display: block;
+}
+.fa.fa-info-circle.desc:hover span {
+  display: block;
+  position: absolute;
+  width: 410px;
+  font-size: 16px !important;
+  color: #000;
+  font-family: sans-serif;
+  line-height: 1.6em;
+  background: #FFF padding-box;
+  padding: 9px;
+  border-radius: 8px;
+  border: 1px solid #000;
+  pointer-events: none;
+  margin: 20px;
+  z-index: 9999999999999;
 }

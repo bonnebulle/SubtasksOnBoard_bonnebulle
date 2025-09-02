@@ -446,7 +446,7 @@ if ( $("#board").length != 0 ) {
   //   if(key == 13) {
   //       e.preventDefault();
   //       // alert("ees")
-  //       // A
+  //       A
   //   }
   // }
 
@@ -650,8 +650,8 @@ if ( $("#board").length != 0 ) {
             console.log("OK GET due_description", response.due_description); 
             // console.log("OK due_description", response.title); 
 
-            var $textarea = $('<textarea class="desc_please" name="text" tabindex="-1" placeholder="Markdown">').val(response.due_description);
-            // var $textarea = $('<textarea class="desc_please" name="text" tabindex="-1" placeholder="Markdown" onkeyup="preventMoving(event);">').val(response.due_description);
+            // var $textarea = $('<textarea class="desc_please" name="text" tabindex="-1" placeholder="Markdown">').val(response.due_description);
+            var $textarea = $('<textarea class="desc_please" name="text" tabindex="-1" placeholder="Markdown" onkeyup="preventMoving(event);" style="max-height: 500px;">').val(response.due_description);
 
             
             var contenu = $wrap_desc.html();
@@ -861,7 +861,7 @@ if ( $("#board").length != 0 ) {
   /// ( USE ON SUBTASK TEXTAREA SUBMIT )
   function reset_textarea($message, $form, context, taskId, subtaskId) {
 
-    $("html").css("overflow", "hidden")
+    // $("html").css("overflow", "hidden")
     
     // alb("reset_textarea == "+$message, on)
     var $textarea = $form.find("textarea");
@@ -1386,7 +1386,7 @@ if ( $("#board").length != 0 ) {
   function autoResizeTextarea(textarea) {
     textarea.style.height = 'auto'; // Réinitialise d'abord la hauteur
     textarea.style.height = (textarea.scrollHeight + 4) + 'px'; // Ajuste à la hauteur du contenu (+10px)
-    $("html").css("overflow", "hidden")
+    // $("html").css("overflow", "hidden")
   }
   /////
 
@@ -1547,6 +1547,137 @@ if ( $("#board").length != 0 ) {
   })
 
 
+
+
+
+
+
+
+
+
+
+
+  // Variables pour la position de la souris
+let mouseX, mouseY;
+
+// Tracker la position de la souris
+$(document).on('mousemove', function(e) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
+
+// Fonction pour vérifier si une textarea est en cours d'utilisation
+function isTextareaActive() {
+  const activeElement = document.activeElement;
+  
+  // Vérifier si l'élément actif est une textarea
+  if (activeElement && activeElement.tagName.toLowerCase() === 'textarea') {
+      return true;
+  }
+  
+  // Vérifier si l'élément actif est un input text
+  if (activeElement && activeElement.tagName.toLowerCase() === 'input' && 
+      ['text', 'email', 'password', 'search', 'url'].includes(activeElement.type)) {
+      return true;
+  }
+  
+  // Vérifier si l'élément actif est contenteditable
+  if (activeElement && activeElement.contentEditable === 'true') {
+      return true;
+  }
+  
+  return false;
+}
+
+// Listener pour les touches "h" et "m"
+$(document).on('keydown', function(e) {
+  // Vérifier si une textarea est active - si oui, sortir de la fonction
+  if (isTextareaActive()) {
+      return;
+  }
+  
+  if (e.key === 'h' || e.key === 'H') {
+      // Récupérer l'élément sous la souris
+      const elementUnderMouse = document.elementFromPoint(mouseX, mouseY);
+      
+      if (elementUnderMouse) {
+          // Chercher le .subt_tr le plus proche
+          const $nearestToggle_sub_desc = $(elementUnderMouse).closest('.subt_tr').find(".toggle_sub_desc_a");
+          
+          if ($nearestToggle_sub_desc.length > 0) {
+              $nearestToggle_sub_desc.click();
+              console.log('Élément .subt_tr trouvé:', $nearestToggle_sub_desc[0]);
+              return $nearestToggle_sub_desc;
+          } else {
+              console.log('Aucun .subt_tr trouvé');
+          }
+      }
+
+      const $nearestToggle_all_sub = $(elementUnderMouse).closest('.task-board-expanded').find(".all_toggle");
+          
+      if ($nearestToggle_all_sub.length > 0) {
+          $nearestToggle_all_sub.click();
+          console.log('Élément .all_toggle:', $nearestToggle_all_sub[0]);
+          return $nearestToggle_all_sub;
+      } else {
+          console.log('Aucun .all_toggle trouvé');
+      }
+  }
+
+  if (e.key === 'm' || e.key === 'M') {
+      // Récupérer l'élément sous la souris
+      const elementUnderMouse = document.elementFromPoint(mouseX, mouseY);
+      
+      if (elementUnderMouse) {
+          const $nearestHandle = $(elementUnderMouse).closest('.board-task-list');
+              
+          if ($nearestHandle.length > 0) {
+              $nearestHandle.mousedown();
+              console.log('Élément .board-task-list:', $nearestHandle[0]);
+              return $nearestHandle;
+          } else {
+              console.log('Aucun .board-task-list trouvé');
+          }
+      }
+  }
+});
+
+// Version alternative plus simple si vous voulez juste vérifier les textarea
+function isTextareaFocused() {
+  return document.activeElement && document.activeElement.tagName.toLowerCase() === 'textarea';
+}
+
+// Exemple d'utilisation de la version simple :
+// if (isTextareaFocused()) {
+//     return; // Sortir si textarea active
+// }
+
+
+
+
+
+// Version alternative avec callback
+function findNearestToggle_sub_desc(callback) {
+    $(document).on('keydown', function(e) {
+        if (e.key === 'e' || e.key === 'E') {
+            const elementUnderMouse = document.elementFromPoint(mouseX, mouseY);
+            
+            if (elementUnderMouse) {
+                const $nearestToggle_sub_desc = $(elementUnderMouse).closest('.edit_subtask');
+                
+                if ($nearestToggle_sub_desc.length > 0 && callback) {
+                    callback($nearestToggle_sub_desc);
+                }
+            }
+        }
+    });
+}
+
+// Exemple d'utilisation avec callback :
+// findNearestToggle_sub_desc(function($element) {
+//     console.log('Élément trouvé:', $element);
+//     $element.addClass('highlight'); // Par exemple
+// });
 
 
 } ///// IF ( $("#board").length != 0 ) {
