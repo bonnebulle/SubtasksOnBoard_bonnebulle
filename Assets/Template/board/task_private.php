@@ -80,6 +80,11 @@
             <?= $this->hook->render('template:board:private:task:before-title', array('task' => $task)) ?>
             <div class="task-board-title">
                 <?= $this->url->link($this->text->e($task['title']), 'TaskViewController', 'show', array('task_id' => $task['id'])) ?>
+                
+                <?php if ($project['is_public']): ?>
+                    <a class="not_popup view_readonly" href="/?controller=TaskViewController&action=readonly&task_id=<?= $task['id'] ?>&token=<?= $project['token'] ?>"><i class="fa fa-fw fa-external-link"></i></a>
+                <?php endif ?>
+
             </div>
             <?= $this->hook->render('template:board:private:task:after-title', array('task' => $task)) ?>
 

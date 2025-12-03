@@ -1,8 +1,8 @@
 
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   // Accès direct ou mauvaise méthode, on bloque
@@ -17,7 +17,7 @@ $task_id = isset($_REQUEST['task_id']) ? intval($_REQUEST['task_id']) : null;
 $subtask_id = isset($_REQUEST['subtask_id']) ? intval($_REQUEST['subtask_id']) : null;
 
 // Charger la config MYSQL CRENTIALS !!!!
-$config = require __DIR__ . '/.env.php';
+$config = require __DIR__ . '/.env';
 
 $dsn = "mysql:host={$config['db_host']};dbname={$config['db_name']};charset=utf8mb4";
 $options = [

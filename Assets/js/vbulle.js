@@ -1,4 +1,4 @@
-///à charger à la fin de /assets/jsapp.min.js
+  ///à charger à la fin de /assets/jsapp.min.js
 // NEXT TO....
 // var _KB = null;
 // jQuery(document).ready(function () {
@@ -23,17 +23,21 @@
 // /README_VBULLE_NOTES.txt
 ////////////////////////
 
+// alert("vb")
 const adebug_active = "oui";
 const off="off";
 const on="on";
 
 if ( $("#board").length != 0 ) {
 
+
+
+
   /// MV Menu
   $(".project-header").insertAfter(".title-container > h1");
 
   /// Modal links
-  $(".task-board-title a").on("click", function(e) {
+  $(".task-board-title a:not(.not_popup)").on("click", function(e) {
     e.preventDefault();
     e.stopPropagation();
     let editurl_origine = $(this).attr("href")
@@ -485,8 +489,10 @@ if ( $("#board").length != 0 ) {
       /// POP TEXTAREA title
       var currentText = $this.find(".title_text").text()
       // .replace("\n","---");
-      var $textarea = $('<textarea class="title_please" name="text" tabindex="-1" placeholder="Titre">').val(currentText);
-      $this.append($textarea);
+      if ($this.find('textarea.title_please').length === 0) {
+        var $textarea = $('<textarea class="title_please" name="text" tabindex="-1" placeholder="Titre">').val(currentText);
+        $this.append($textarea);
+    }
       $textarea.focus();
       $this.find(".title_text").remove()
 
@@ -651,7 +657,7 @@ if ( $("#board").length != 0 ) {
             // console.log("OK due_description", response.title); 
 
             // var $textarea = $('<textarea class="desc_please" name="text" tabindex="-1" placeholder="Markdown">').val(response.due_description);
-            var $textarea = $('<textarea class="desc_please" name="text" tabindex="-1" placeholder="Markdown" onkeyup="preventMoving(event);" style="max-height: 500px;">').val(response.due_description);
+            var $textarea = $('<textarea class="desc_please" name="text" tabindex="-1" placeholder="Markdown" style="max-height: 500px;">').val(response.due_description);
 
             
             var contenu = $wrap_desc.html();
@@ -945,7 +951,7 @@ if ( $("#board").length != 0 ) {
             success: function(response) { 
               // alert("ff - "+response.due_description)
 
-              let due_description=response.due_description;
+              let due_description=marked.parse(response.due_description); 
               let html_new_desc_fix = (html_new_desc=="vide") ? "" : html_new_desc;
               let due_description_checked = (due_description=="vide") ? html_new_desc_fix : due_description;
               let due_description_fixed = due_description_checked.replace(/\n+$/,"").replace(/---/,"\n")
@@ -962,7 +968,8 @@ if ( $("#board").length != 0 ) {
                   const url = new URL(window.location.href);
                   url.searchParams.set('data-task-id', taskId);
                   url.searchParams.set('data-subtask-id', subtaskId);
-                  window.location.href = url.toString();
+                  // alert("rem")
+                  // window.location.href = url.toString();
                 },100);
 
                 // TROP DE SOUCIS AVEC MD RENDING ---- RELOAD
@@ -1037,6 +1044,8 @@ if ( $("#board").length != 0 ) {
   } /// DESC + TITLE
 
 
+
+
   //// SAVE TOGGLE SHOW/HIDE
   function toggle_save_checkboxs($this, $desc, task_id, subtask_id) {
     // alb("toggle_save_checkboxs")
@@ -1073,56 +1082,153 @@ if ( $("#board").length != 0 ) {
   })
 
 
-  //// MV SUB TASKS
-  function cibles(message, context) {
+
+
+
+
+  //// MV SUB TASKS -- Cibles + cible_mod, context==keypress
+  function cibles(context, $nearest_subt_tr) {
     $(".cible").on("click", function(e) {
       let delay_before_reload_page = 900
       let clicli=0
       e.preventDefault();
       e.stopPropagation();
+      $('html').addClass('wait_clic');
 
-    $('html').addClass('wait_clic');
-    // Ajoute les overlays si besoin
-    // $('.subt_tr').each(function() {
-    //     if ($(this).find('.subt_overlay').length === 0) {
-    //         $(this).append('<div class="subt_overlay"></div>');
-    //     }
-    // });
 
-    //// THIS IS FIRST CLICKED <-----
-    let subid = $(this).parent().parent().parent().find(".sub_desc").data('subid');
+      //// THIS IS FIRST CLICKED <-----
+      if (context=="keypress") {
+        var subid = $($nearest_subt_tr).find(".sub_desc").data('subid');
+        $($nearest_subt_tr).closest(".task-board").addClass("clicked_parent");
+        $($nearest_subt_tr).closest(".subt_tr").addClass('first_clic_origine');
+      } else { // Default
+        var subid = $(this).parent().parent().parent().find(".sub_desc").data('subid');
+        $(this).closest(".task-board").addClass("clicked_parent");
+        $(this).closest(".subt_tr").addClass('first_clic_origine');
+      }
+      
+      // overlays
+      $('.subt_td').each(function() {
+        // ADD overlay (if not)
+        if ($(this).find('.subt_overlay').length === 0) {
 
-    $(this).closest(".task-board").addClass("clicked_parent")
-    $(this).closest(".subt_tr").addClass('first_clic_origine');
-    
-    // overlays
-    $('.subt_td').each(function() {
-      // ADD overlay (if not)
-      if ($(this).find('.subt_overlay').length === 0) {
+            $(this).append('<div class="subt_overlay total subt"></div>');
 
-          $(this).append('<div class="subt_overlay total subt"></div>');
+            $(this).on("click", function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+              clicli++;
 
-          $(this).on("click", function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            clicli++;
+              
+              let task_id = $(this).find(".sub_title_form").data("task_id");
+              // let subtask_id = $(this).find(".sub_title_form").data("subtask_id");
+              // alb(subtask_id)
+              let subtask_pos = Number($(this).find(".sub_title_form").data("position"));
+              let subtask_id_cible = subid;
+              // alb(subtask_pos)
+              let current_table = $(this).closest(".task-board");
+              // alb(current_table.attr("class"))
+              // alb(task_id + " + " +subtask_id)
+              // return;
 
+              let getparent = $(this).closest(".task-board");
+              let parentclass=$(getparent).attr("class")
+              if ( !/clicked_parent\s*$/.test(parentclass) ) {
+                // Appel AJAX pour déplacer la sous-tâche
+                $.ajax({
+                  url: '/assets/php/change_subtask_parent.php',
+                  type: 'POST',
+                  data: {
+                    subtask_id: subid,
+                    task_id: task_id
+                  },
+                  success: function(response) {
+                    // FEEDBACK
+                    // alb('Sous-tâche déplacée !');
+                    console.log("tache déplacée")
+                  },
+                  error: function(xhr) {
+                    alb('Erreur lors du déplacement : ' + xhr.statusText);
+                  }
+                }); /// AJAX SAVE MV
+              }
+
+
+              /// GET POSITION ORDER
+              // Récupérer l'ordre actuel
+              let order = [];
+              $(current_table).find(".subt_tr").each(function() {
+                let subtask_id = $(this).find(".sub_desc").attr("data-subid");
+                
+                if ( !/clicked_parent\s*$/.test(parentclass) ) {  
+                  /// NOT SAME ORIGINE (normal)
+                  order.push(subtask_id);
+                
+                } else {
+                  /// SAME ORIGINE --- do no add subid (origine) to array (return)
+                  if (subtask_id == subid) {
+                    return 
+                  } else {
+                    order.push(subtask_id);
+                  }
+                }
+              });
+
+
+              order.splice(Number(subtask_pos) - 1, 0, String(subid));
+              console.log(subtask_pos)
+              console.log(order);
+              // return
+              $.ajax({
+                url: "/assets/php/change_suborder.php",
+                type: "POST",
+                data: {
+                    task_id: task_id,
+                    order: order
+                },
+                success: function(response) {
+                    // Optionnel : recharger la page ou mettre à jour l'UI
+                    // Redirige vers la même page avec les paramètres demandés
+                    setTimeout(function () {           
+                      const url = new URL(window.location.href);
+                      // alb(task_id + "----" +subid)
+                      url.searchParams.set('data-task-id', task_id);
+                      url.searchParams.set('data-subtask-id', subid);
+                      window.location.href = url.toString();
+                    },delay_before_reload_page);
+                }
+              }); // AJAX
+      
+
+
+              clicli = 0;
+              $('html').removeClass('wait_clic');
+              $('html').removeData('subid');
+            })
             
-            let task_id = $(this).find(".sub_title_form").data("task_id");
-            // let subtask_id = $(this).find(".sub_title_form").data("subtask_id");
-            // alb(subtask_id)
-            let subtask_pos = Number($(this).find(".sub_title_form").data("position"));
-            let subtask_id_cible = subid;
-            // alb(subtask_pos)
-            let current_table = $(this).closest(".task-board");
-            // alb(current_table.attr("class"))
-            // alb(task_id + " + " +subtask_id)
-            // return;
+        } /// OVERLAY SUB TASKS EXISTS
 
-            let getparent = $(this).closest(".task-board");
-            let parentclass=$(getparent).attr("class")
-            if ( !/clicked_parent\s*$/.test(parentclass) ) {
-              // Appel AJAX pour déplacer la sous-tâche
+      }); /// subt_td each -- overlays
+
+      
+      //// On click element -> GOOO
+      $('.task-board').each(function() {
+
+        // ADD overlay (if not)
+        if ($(this).find('.subt_td').length === 0) {
+          if ($(this).find('.subt_overlay').length === 0) {
+
+            $(this).append('<div class="subt_overlay total"></div>');
+            
+            $(this).on("click", function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+              clicli++;
+
+              let task_id = $(this).data("task-id")
+              // alb(task_id)
+
+              ///// AJAX
               $.ajax({
                 url: '/assets/php/change_subtask_parent.php',
                 type: 'POST',
@@ -1133,123 +1239,28 @@ if ( $("#board").length != 0 ) {
                 success: function(response) {
                   // FEEDBACK
                   // alb('Sous-tâche déplacée !');
-                  console.log("tache déplacée")
+                  console.log("tache déplacée 111")
+
+                  // Optionnel : recharger la page ou mettre à jour l'UI
+                  // Redirige vers la même page avec les paramètres demandés
+                  setTimeout(function () {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('data-task-id', task_id);
+                    url.searchParams.set('data-subtask-id', subid);
+                    window.location.href = url.toString();
+                  },delay_before_reload_page);
                 },
                 error: function(xhr) {
                   alb('Erreur lors du déplacement : ' + xhr.statusText);
                 }
               }); /// AJAX SAVE MV
-            }
-
-
-            /// GET POSITION ORDER
-            // Récupérer l'ordre actuel
-            let order = [];
-            $(current_table).find(".subt_tr").each(function() {
-              let subtask_id = $(this).find(".sub_desc").attr("data-subid");
-              
-              if ( !/clicked_parent\s*$/.test(parentclass) ) {  
-                /// NOT SAME ORIGINE (normal)
-                order.push(subtask_id);
-              
-              } else {
-                /// SAME ORIGINE --- do no add subid (origine) to array (return)
-                if (subtask_id == subid) {
-                  return 
-                } else {
-                  order.push(subtask_id);
-                }
-              }
             });
 
+          } /// overlay not exist ?
+        } // subt_td not exist ?
+      }); /// task-board ( no sub overlay )
 
-            order.splice(Number(subtask_pos) - 1, 0, String(subid));
-            console.log(subtask_pos)
-            console.log(order);
-            // return
-            $.ajax({
-              url: "/assets/php/change_suborder.php",
-              type: "POST",
-              data: {
-                  task_id: task_id,
-                  order: order
-              },
-              success: function(response) {
-                  // Optionnel : recharger la page ou mettre à jour l'UI
-                  // Redirige vers la même page avec les paramètres demandés
-                  setTimeout(function () {           
-                    const url = new URL(window.location.href);
-                    // alb(task_id + "----" +subid)
-                    url.searchParams.set('data-task-id', task_id);
-                    url.searchParams.set('data-subtask-id', subid);
-                    window.location.href = url.toString();
-                  },delay_before_reload_page);
-              }
-            }); // AJAX
-    
-
-
-            clicli = 0;
-            $('html').removeClass('wait_clic');
-            $('html').removeData('subid');
-          })
-          
-      } /// OVERLAY SUB TASKS EXISTS
-
-    }); /// subt_td each
-
-
-
-    
-    $('.task-board').each(function() {
-
-      // ADD overlay (if not)
-      if ($(this).find('.subt_td').length === 0) {
-        if ($(this).find('.subt_overlay').length === 0) {
-
-          $(this).append('<div class="subt_overlay total"></div>');
-          
-          $(this).on("click", function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            clicli++;
-
-            let task_id = $(this).data("task-id")
-            // alb(task_id)
-
-            ///// AJAX
-            $.ajax({
-              url: '/assets/php/change_subtask_parent.php',
-              type: 'POST',
-              data: {
-                subtask_id: subid,
-                task_id: task_id
-              },
-              success: function(response) {
-                // FEEDBACK
-                // alb('Sous-tâche déplacée !');
-                console.log("tache déplacée 111")
-
-                // Optionnel : recharger la page ou mettre à jour l'UI
-                // Redirige vers la même page avec les paramètres demandés
-                setTimeout(function () {
-                  const url = new URL(window.location.href);
-                  url.searchParams.set('data-task-id', task_id);
-                  url.searchParams.set('data-subtask-id', subid);
-                  window.location.href = url.toString();
-                },delay_before_reload_page);
-              },
-              error: function(xhr) {
-                alb('Erreur lors du déplacement : ' + xhr.statusText);
-              }
-            }); /// AJAX SAVE MV
-          });
-
-        } /// overlay not exist ?
-      } // subt_td not exist ?
-    }); /// task-board ( no sub overlay )
-
-    reset_cible_on_escape();
+      reset_cible_on_escape();
 
     }) //// CIBLE
   } /// cibles
@@ -1258,6 +1269,139 @@ if ( $("#board").length != 0 ) {
 
 
 
+
+  function fn_get_blocs_texts(thiis, action_pls) {
+
+    // alert(action_pls)
+    let today = new Date(),
+    time = today.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+    
+    let clip_text = "";
+    let promises = [];
+
+    let projet_name = $(thiis).attr("data-projet-name");
+    let swimlane_name = $(thiis).attr("data-swimlane-name");
+    
+    clip_text += projet_name + " > ";
+    clip_text += swimlane_name + " > ";
+    clip_text += "\nTâche n° : " + $(thiis).find(".task-board-title a").attr("href").replace("\/?","").replace("controller=TaskViewController&action=show&task_id=","") + "\n"
+
+    clip_text += "---------\n\n"
+    /// TITRE DESC
+    clip_text += "# "
+    clip_text += md( $(thiis).find(".task-board-title a").text() ) + "\n"
+    clip_text += md( $(thiis).find(".description-inside-task").html() ) + "\n"
+    
+    let tasktotal = $(thiis).find('.subt_tr').length;
+
+    /// SUB TASKS
+    $(thiis).find('.subt_tr').each(function() {
+        let id = $(thiis).attr("data-task-id");
+        let subid = $(this).find("[data-subtask_id]").attr("data-subtask_id");
+        
+        // On wrappe la promesse pour conserver id et subid
+        promises.push(
+            cpclip_subtasks(id, subid).then(result => ({
+                id: id,
+                subid: subid,
+                result: result
+            }))
+        );
+    });
+    
+    /// INFOS
+    const capitalize = ([first,...rest]) => first.toUpperCase() + rest.join('').toLowerCase();
+    const {weekday, dayNumber, month, year} = frenchTodayDate();
+    const aujourdhui = `${capitalize(weekday)}, le ${dayNumber} ${month} ${year}`;
+    
+    Promise.all(promises).then(results => {
+      let tascount = 1;
+      
+      results.forEach(item => {
+
+
+        let projet_id = $(thiis).attr("data-project-id")
+        var host = window.location.host; 
+        var proto = window.location.protocol; 
+        let id = $(thiis).attr("data-task-id");
+
+        let public_link = $(thiis).find(".view_readonly").attr("href")
+        // alert(public_link)
+        // "/?controller=BoardViewController&action=show&project_id=" + projet_id + "&data-task-id=" + id +")"
+
+        let task_link = (action_pls=="md_to_pdf") ?
+            "\n[lien vers la tâche]("+proto + "//" + host + public_link +")" :
+            proto + "//" + host + public_link
+        alert(task_link)
+        /// FIRST
+        if (tascount == 1) {
+            clip_text += aujourdhui + " -- " + time + "\n";
+            clip_text += task_link
+            
+            clip_text += "\n\n" + tascount + " ======================== " + tascount + "/" + tasktotal + "\n\n";
+        }
+        
+        // "[lien vers la sous-tâche]("+proto + "//" + host + "/?controller=BoardViewController&action=show&project_id=" + projet_id + "&data-task-id=" + id +"&data-subtask-id="+item.subid +")\n" :
+        let sub_task_link_top = (action_pls=="md_to_pdf") ?
+            "[lien vers la sous-tâche]("+proto + "//" + host + public_link +"&data-subtask-id="+item.subid +")\n" :
+            ""
+
+        clip_text += sub_task_link_top;
+
+        /// TEXTE
+        clip_text += item.result; 
+  
+
+        // "\n\n-- Lien :\n"+proto + "//" + host + "/?controller=BoardViewController&action=show&project_id=" + projet_id + "&data-task-id=" + id +"&data-subtask-id="+item.subid+"\n"
+        let sub_task_link = (action_pls=="md_to_pdf") ?
+            "" :
+            "\n\n-- Lien :\n"+proto + "//" + host + public_link +"&data-subtask-id="+item.subid+"\n"
+
+        clip_text += sub_task_link;
+               
+
+
+        tascount++
+        // NORMAL
+        if ((tascount>1) && (tascount!=tasktotal+1)) {
+          clip_text+="\n\n"+tascount+" ====================\ \n\n"
+          
+        };
+
+
+        // LAST
+        if (tascount==tasktotal+1) {
+          clip_text += "\n\n=========================== "+Number(tascount-1)+"/"+Number(tasktotal)+"\n\n\n"
+        };
+
+
+
+
+      });
+
+
+      /// LAST if no subtasks
+      if (tasktotal==0) {
+        
+        clip_text+="\n\n========================\n\n"
+
+
+      };
+
+
+
+      
+      if (action_pls=="md_to_pdf") {
+        exporterEnPdf(clip_text)
+      } else {
+        navigator.clipboard.writeText(clip_text).then(() => {
+            alert(clip_text);
+        }).catch(err => {
+          alert('Erreur lors de la copie : ' + err);
+        });
+      }
+    });
+  }
 
 
   /// CLIPALL infos date French
@@ -1281,6 +1425,9 @@ if ( $("#board").length != 0 ) {
     $(thiis).find(".rm_task_quickaction").before("\
     <a class='cpclip_all' onclick=''> \
         <i class='fa fa-clipboard'></i> \
+    </a> \
+    <a class='md_to_pdf' onclick=''> \
+        <i class='fa fa-file'></i> \
     </a>")
 
 
@@ -1293,94 +1440,167 @@ if ( $("#board").length != 0 ) {
       <a class='plink_sub_task' href='"+proto+"//"+host+"/?controller=BoardViewController&action=show&project_id="+data_project_id+"&data-task-id="+data_task_id+"'> \
           <i class='fa fa-link'></i> \
       </a>")
-
-
+    
 
 
     $(thiis).find(".cpclip_all").on("click", function(e) {
       e.preventDefault();
       e.stopPropagation();
-
-      let today = new Date(),
-      time = today.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-      
-      let clip_text = "";
-      let promises = [];
-
-      let projet_name = $(thiis).attr("data-projet-name");
-      let swimlane_name = $(thiis).attr("data-swimlane-name");
-      
-      clip_text += projet_name + " > ";
-      clip_text += swimlane_name + " > ";
-      clip_text += "\nTâche n° : " + $(thiis).find(".task-board-title a").attr("href").replace("\/?","").replace("controller=TaskViewController&action=show&task_id=","") + "\n"
-
-      clip_text += "---------\n\n"
-      /// TITRE DESC
-      clip_text += "# "
-      clip_text += md( $(thiis).find(".task-board-title a").text() ) + "\n"
-      clip_text += md( $(thiis).find(".description-inside-task").html() ) + "\n"
-      
-
-      let tasktotal=$(thiis).find('.subt_tr').length
-      /// SUB TASKS
-      $(thiis).find('.subt_tr').each(function() {
-        let id = $(thiis).attr("data-task-id");
-        let subid = $(this).find("[data-subtask_id]").attr("data-subtask_id");
-        // On stocke la Promise dans un tableau
-        promises.push(cpclip_subtasks(id, subid)); /// Utilisé par async (Ajax needed)
-      });
-
-      Promise.all(promises).then(results => {
-
-        let tascount=1
-        results.forEach(result => {
-          /// FIRST
-          if (tascount==1) clip_text+="\n\n"+tascount+" ======================== "+Number(tascount)+"/"+Number(tasktotal)+"\n\n";
-          
-          /// TEXT
-          clip_text += result;
-
-          tascount++
-          // NORMAL
-          if ((tascount>1) && (tascount!=tasktotal+1)) clip_text+="\n\n"+tascount+" ====================\ \n\n";
-          // LAST
-          if (tascount==tasktotal+1) clip_text += "\n\n=========================== "+Number(tascount-1)+"/"+Number(tasktotal)+"\n\n\n";
-        });
-
-        /// INFOS
-        const capitalize = ([first,...rest]) => first.toUpperCase() + rest.join('').toLowerCase();
-        const {weekday, dayNumber, month, year} = frenchTodayDate()
-        const aujourdhui = `${capitalize(weekday)}, le ${dayNumber} ${month} ${year}`
-
-        /// LAST if no subtasks
-        if (tasktotal==0) clip_text+="\n\n========================\n\n";
-
-        clip_text += "Infos :\n"
-        clip_text += aujourdhui + " -- " + time;
-        clip_text += "\n. . .";
-
-        let projet_id = $(thiis).attr("data-project-id")
-        let task_id = $(thiis).attr("data-task-id")
-        var host = window.location.host; 
-        var proto = window.location.protocol; 
-        let permal = proto + "//" + host + "/?controller=BoardViewController&action=show&project_id=" + projet_id + "&data-task-id=" + task_id
-        clip_text += "\n" + permal;
-
-        // Ici, tu peux utiliser clip_text (copie, alert, etc.)
-        navigator.clipboard.writeText(clip_text).then(() => {
-          alert(clip_text);
-        }).catch(err => {
-          alert('Erreur lors de la copie : ' + err);
-        });
-      });
-
+      let thiis=$(this).parent().parent().parent()
+      fn_get_blocs_texts(thiis)
+    })
+    $(thiis).find(".md_to_pdf").on("click", function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      let thiis=$(this).parent().parent().parent()
+      fn_get_blocs_texts(thiis, "md_to_pdf")
     })
 
   }) //// task-board
 
 
+  // FAIL
+  // function ajouterCesureAutomatique(texte) {
+  //   // Fonction plus agressive qui coupe les mots vraiment longs
+  //   return texte.replace(/\b(\w{8,})\b/g, function(mot) {
+  //     // Coupe tous les mots de 8+ caractères tous les 4-5 caractères
+  //     return mot.replace(/(\w{4,5})/g, '$1\u00AD');
+  //   });
+  // }
 
+  function exportMarkdownToPdf(markdownText, filename = 'document.pdf') {
+    // const texteAvecCesure = ajouterCesureAutomatique(markdownText);
+    const htmlContent = marked.parse(markdownText);
+    
+    const container = document.createElement('div');
+    container.innerHTML = `
+      <style>
+        .pdf-container {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-size: 11pt;
+          line-height: 1.6;
+          color: #333;
+          padding: 20px;
+          margin-left: 30px;
+          max-width: 600px;  /* Réduit de 800px à 600px pour forcer plus de césures */
+          text-align: justify;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+        }
+        .pdf-container h1 { 
+          font-size: 24pt; 
+          margin-top: 0;
+          margin-bottom: 16px;
+          border-bottom: 2px solid #eee;
+          padding-bottom: 8px;
+        }
+        .pdf-container h2 { 
+          font-size: 20pt; 
+          margin-top: 24px;
+          margin-bottom: 12px;
+        }
+        .pdf-container h3 { 
+          font-size: 16pt; 
+          margin-top: 20px;
+          margin-bottom: 10px;
+        }
+        .pdf-container p { 
+          margin: 8px 0;
+          word-wrap: break-word;
+        }
+        .pdf-container code {
+          background: #f4f4f4;
+          padding: 2px 6px;
+          border-radius: 3px;
+          font-family: 'Courier New', monospace;
+          font-size: 10pt;
+          word-wrap: break-word;
+        }
+        .pdf-container pre {
+          background: #f4f4f4;
+          padding: 12px;
+          border-radius: 4px;
+          overflow-x: auto;
+          margin: 12px 0;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+        }
+        .pdf-container pre code {
+          background: none;
+          padding: 0;
+        }
+        .pdf-container ul, .pdf-container ol {
+          margin: 8px 0;
+          padding-left: 24px;
+        }
+        .pdf-container li {
+          margin: 4px 0;
+          word-wrap: break-word;
+        }
+        .pdf-container blockquote {
+          border-left: 4px solid #ddd;
+          margin: 12px 0;
+          padding-left: 16px;
+          color: #666;
+          font-style: italic;
+        }
+        .pdf-container table {
+          border-collapse: collapse;
+          width: 100%;
+          margin: 12px 0;
+          table-layout: fixed;
+        }
+        .pdf-container th, .pdf-container td {
+          border: 1px solid #ddd;
+          padding: 8px;
+          text-align: left;
+          word-wrap: break-word;
+        }
+        .pdf-container th {
+          background: #f4f4f4;
+          font-weight: bold;
+        }
+        .pdf-container a {
+          color: #0366d6;
+          text-decoration: none;
+          word-wrap: break-word;
+        }
+        .pdf-container img {
+          max-width: 100%;
+          height: auto;
+        }
+      </style>
+      <div class="pdf-container" lang="fr">
+        ${htmlContent}
+      </div>
+    `;
+    
+    const options = {
+      margin: [10, 0, 0, 45],
+      filename: filename,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { 
+        scale: 2,
+        useCORS: true,
+        letterRendering: true
+      },
+      jsPDF: { 
+        unit: 'mm', 
+        format: 'a4', 
+        orientation: 'portrait'
+      },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+    
+    html2pdf().set(options).from(container).save();
+  }
 
+  function exporterEnPdf(clip_text) {
+    console.log("GO --- exporterEnPdf")
+    console.log(clip_text)
+    exportMarkdownToPdf(clip_text, 'kanboard-export.pdf');
+  }
+  
 
   ///// TEXTAREA AUTO HEIGHT (depreciated)
   function autoResizeTextarea(textarea) {
@@ -1436,6 +1656,7 @@ if ( $("#board").length != 0 ) {
         if ($('.desc_please').length > 1) {
             if (!window.confirm("ESCAPE va fermer les zonnes de textes en cours d'édition (textareas)...\n\nPlusieurs textareas sont ouvertes. \n\nVoulez-vous toutes les fermer sans sauvegarder ?")) return;
         }
+
         $('.desc_please').each(function() {
           // alb($(".desc_please").length)
           var $parent = $(this).parent();
@@ -1490,10 +1711,18 @@ if ( $("#board").length != 0 ) {
           // $parent.removeClass("active")
           // alb("stop")
         });
+
+        $('html').removeClass('wait_clic').removeClass('largeview');
+        $('.edit_me').removeClass('edit_me')
+        $('.edit_mod_place').remove()
+
       }
+
+
     }, true); // <--- true active la capture
 
     $("html").css("overflow", "auto")
+    $('html').removeClass('wait_clic').removeClass('largeview');
   }  
 
   function linkify(text) {
@@ -1509,14 +1738,16 @@ if ( $("#board").length != 0 ) {
     if (escapeCibleListenerAdded) return;
     escapeCibleListenerAdded = true;
     document.addEventListener('keydown', function(e) {
+      
       if (e.key === 'Escape') {
+        
         // Supprimer les classes ajoutées
         $('.clicked_parent').removeClass('clicked_parent');
         $('.first_clic_origine').removeClass('first_clic_origine');
         // Supprimer les overlays ajoutés
         $('.subt_overlay').remove();
         // Optionnel : retirer la classe d’attente
-        $('html').removeClass('wait_clic');
+        $('html').removeClass('wait_clic').removeClass('largeview');
         // Optionnel : reset d’autres effets visuels si besoin
       }
     }, true);
@@ -1567,7 +1798,8 @@ $(document).on('mousemove', function(e) {
 });
 
 // Fonction pour vérifier si une textarea est en cours d'utilisation
-function isTextareaActive() {
+function isTextareaActive() { /// Textarea is editing ?
+  
   const activeElement = document.activeElement;
   
   // Vérifier si l'élément actif est une textarea
@@ -1587,15 +1819,102 @@ function isTextareaActive() {
   }
   
   return false;
+
+} /// isTextareaActive
+
+
+
+
+////////// EDIT
+/// PRESS E - edit_mod trouver wrap_desc (plus proche de l'élément survolé par la sourie)
+function find_subt_tr(elementUnderMouse) {
+  // const $container = $(elementUnderMouse).closest(".subt_tr");
+  const $wrap = $(elementUnderMouse).closest(".subt_tr");
+  return $wrap;
 }
 
-// Listener pour les touches "h" et "m"
+/// PRESS E/button a.edit_mode -> edit_mode ()
+/// TOGGLE display textarea open
+/// CSS html.largeview
+function edit_mod(elementUnderMouse) {
+
+  if ( !$("html").hasClass("largeview") ) { /// ? notAlready largeview
+
+    if (elementUnderMouse) {
+      
+      const $nearest_subt_tr = find_subt_tr(elementUnderMouse)
+      if ($nearest_subt_tr.find(".wrap_desc").length > 0) {
+        //// GOOOO
+        $nearest_subt_tr.find(".wrap_desc").click();
+  
+        /// CSS
+        $("html").addClass("largeview");
+        $nearest_subt_tr.addClass('edit_me')
+  
+        /// GOOO SHOW Textarera (un.collapse)
+        /// Eye Toggle = display sub_desc
+        $nearest_subt_tr.find(".sub_desc").addClass("active");
+        //// Checkbox, display textarea
+        $nearest_subt_tr.find(".toggle_sub_desc_checkbox").prop("checked", false);
+  
+        /// CLONE FAKE TITLE place -- edit_mod_place
+        let title_text=$nearest_subt_tr.find(".title_text").text()
+        $nearest_subt_tr.after('<tr class="subt_tr edit_mod_place"><td>'+title_text+'</td></tr>')
+  
+        // return $nearestToggle_sub_desc;
+      } else { 
+          console.log('--- Aucun .subt_tr trouvé');
+      }
+    } 
+    
+  } else { // ? html.largeview
+    console.log('--- already largeview');
+  } // ? html.largeview
+
+} /// edit_mod
+
+
+//// BUG RECURSSIV BUG
+// function cible_mod(elementUnderMouse) {
+//     if (elementUnderMouse) {
+//       const $nearest_subt_tr = find_subt_tr(elementUnderMouse)
+//       console.log($nearest_subt_tr)
+//       cible_mod("keypress", $nearest_subt_tr)
+//     } 
+// } /// cible_mod
+
+
+
+//// KEYPRESS
 $(document).on('keydown', function(e) {
   // Vérifier si une textarea est active - si oui, sortir de la fonction
-  if (isTextareaActive()) {
+  if (isTextareaActive()) { // Textarea en court d'edit
       return;
   }
+
+  /// E edit_mod
+  if (e.key === 'e' || e.key === 'E') {
+    // Récupérer l'élément sous la souris
+    const elementUnderMouse = document.elementFromPoint(mouseX, mouseY);
+    if (elementUnderMouse) {
+      edit_mod(elementUnderMouse);
+    } else {
+      console.log("---- debug NO elementUnderMouse")
+    }
+  } /// E
+
+  /// C cible_mod
+  // if (e.key === 'c' || e.key === 'C') { /// RECURSSIV BUG
+  //   // Récupérer l'élément sous la souris
+  //   const elementUnderMouse = document.elementFromPoint(mouseX, mouseY);
+  //   if (elementUnderMouse) {
+  //     cible_mod(elementUnderMouse);
+  //   } else {
+  //     console.log("---- debug NO elementUnderMouse")
+  //   }
+  // } /// C
   
+  /// H Hide / show : toggle
   if (e.key === 'h' || e.key === 'H') {
       // Récupérer l'élément sous la souris
       const elementUnderMouse = document.elementFromPoint(mouseX, mouseY);
@@ -1605,8 +1924,9 @@ $(document).on('keydown', function(e) {
           const $nearestToggle_sub_desc = $(elementUnderMouse).closest('.subt_tr').find(".toggle_sub_desc_a");
           
           if ($nearestToggle_sub_desc.length > 0) {
+              //// GOOOO
               $nearestToggle_sub_desc.click();
-              console.log('Élément .subt_tr trouvé:', $nearestToggle_sub_desc[0]);
+              // console.log('Élément .subt_tr trouvé:', $nearestToggle_sub_desc[0]);
               return $nearestToggle_sub_desc;
           } else {
               console.log('Aucun .subt_tr trouvé');
@@ -1614,7 +1934,6 @@ $(document).on('keydown', function(e) {
       }
 
       const $nearestToggle_all_sub = $(elementUnderMouse).closest('.task-board-expanded').find(".all_toggle");
-          
       if ($nearestToggle_all_sub.length > 0) {
           $nearestToggle_all_sub.click();
           console.log('Élément .all_toggle:', $nearestToggle_all_sub[0]);
@@ -1622,8 +1941,10 @@ $(document).on('keydown', function(e) {
       } else {
           console.log('Aucun .all_toggle trouvé');
       }
-  }
 
+  } /// H
+
+  /// M bug
   if (e.key === 'm' || e.key === 'M') {
       // Récupérer l'élément sous la souris
       const elementUnderMouse = document.elementFromPoint(mouseX, mouseY);
@@ -1639,46 +1960,61 @@ $(document).on('keydown', function(e) {
               console.log('Aucun .board-task-list trouvé');
           }
       }
-  }
+  } /// M
+
 });
 
-// Version alternative plus simple si vous voulez juste vérifier les textarea
+//// CHECK If textarea in use --> if yes, disable Ket Triggers
 function isTextareaFocused() {
   return document.activeElement && document.activeElement.tagName.toLowerCase() === 'textarea';
 }
 
-// Exemple d'utilisation de la version simple :
-// if (isTextareaFocused()) {
-//     return; // Sortir si textarea active
-// }
+
+$(document).on("click", ".edit_close", function (e) {
+  reset_textarea_on_escape();
+  $("html").removeClass("largeview")
+  // alert('close')
+  $(".edit_mod_place").remove()
+  const $nearest_subt_tr = $(this).parent().parent().parent();
+  $nearest_subt_tr.removeClass("edit_me")
+});
+
+
+$(document).on("click", ".edit_mod", function (e) {
+  const elementUnderMouse = $(this).parent().parent().parent();
+  edit_mod(elementUnderMouse);
+});
 
 
 
 
 
-// Version alternative avec callback
-function findNearestToggle_sub_desc(callback) {
-    $(document).on('keydown', function(e) {
-        if (e.key === 'e' || e.key === 'E') {
-            const elementUnderMouse = document.elementFromPoint(mouseX, mouseY);
-            
-            if (elementUnderMouse) {
-                const $nearestToggle_sub_desc = $(elementUnderMouse).closest('.edit_subtask');
-                
-                if ($nearestToggle_sub_desc.length > 0 && callback) {
-                    callback($nearestToggle_sub_desc);
-                }
-            }
-        }
-    });
+// alert("ready 111");
+$(document).ready(function() {
+  var isDragging = false;
+  var draggedElement = null;
+  
+  $('.board-task-list').on('mousedown', function() {
+      isDragging = true;
+      draggedElement = $(this).closest('.board-task');
+      console.log('Début drag:', draggedElement);
+  });
+  
+  $(document).on('mouseup', function() {
+      if (isDragging) {
+          setTimeout(function() {
+              // console.log('Fin drag-drop');
+              dragndropend();
+              isDragging = false;
+              draggedElement = null;
+          }, 100); // Petit délai pour laisser le DOM se mettre à jour
+      }
+  });
+});
+
+function dragndropend() {
+  console.log("todo on dndrop end")
 }
-
-// Exemple d'utilisation avec callback :
-// findNearestToggle_sub_desc(function($element) {
-//     console.log('Élément trouvé:', $element);
-//     $element.addClass('highlight'); // Par exemple
-// });
-
 
 } ///// IF ( $("#board").length != 0 ) {
 

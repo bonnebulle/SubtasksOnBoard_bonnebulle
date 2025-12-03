@@ -22,7 +22,7 @@
     </div>
     <span class='all_toggle_wraper' onclick="">
         <a href="" class="all_toggle active">
-            <i class="fa fa-eye ok" aria-hidden="true" onclick=""></i>
+            <i class="fa fa-eye ok" title="Cacher/Déplier toutes -Press H" aria-hidden="true" onclick=""></i>
         </a>
     </span>
     
@@ -48,10 +48,11 @@
                 </a>
 
                 <!-- /// TOGGLE SHOW/HIDE -->
-                <a class="toggle_sub_desc_a" onclick="" data-task_id="<?= $task["id"] ?>" data-subtask_id="<?=$subtask["id"] ?>">
+                <a class="toggle_sub_desc_a" title="Cacher/Déplier -Press H" onclick="" data-task_id="<?= $task["id"] ?>" data-subtask_id="<?=$subtask["id"] ?>">
                     <label class="toggle_sub_desc" for="toggle_sub_desc_<?= $subtask_id ?>"><i class='fa fa-eye'></i></label>
                 </a>
                 <!-- </span> -->
+                 <!-- CHECK IF USER CONNECTED -->
                 <?php if ($this->projectRole->canUpdateTask($task)): ?>
                     <!-- /// RM -->
                     <a class="js-modal-medium rmbutt" href="/?controller=SubtaskController&action=confirm&task_id=<?= $task["id"] ?>&subtask_id=<?=$subtask["id"] ?>">
@@ -60,6 +61,12 @@
                     <!-- /// MOD EDIT -->
                     <a class="js-modal-medium editbutt" href="/?controller=SubtaskController&action=edit&task_id=<?= $task["id"] ?>&subtask_id=<?=$subtask["id"] ?>">
                         <i class="fa fa-edit fa-fw js-modal-large" aria-hidden="true"></i>
+                    </a>
+                    <a class="edit_mod" href="#" title="Elargir (éditer dans popup) -Press E" onclick="">
+                        <i class="fa fa-arrows-h fa-fw" aria-hidden="true"></i>
+                    </a>
+                    <a class="edit_close" href="#" title="Fermer" onclick="">
+                        <i class="fa fa-times" aria-hidden="true"></i>
                     </a>
                 <?php endif ?>
                 <!-- <li> -->
@@ -88,8 +95,8 @@
 
         </tr>
 
-        <?php endforeach ?>
-    </table>
+    <?php endforeach ?> <!-- ($subtasks as $subtask): -->
+</table>
     
 <?php else: ?>
 

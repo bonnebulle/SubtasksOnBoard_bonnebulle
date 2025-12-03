@@ -23,3 +23,5 @@ setTimeout(function () {
   cibles()
   drame_subtasks()
 },500);
+
+// alert("kkk")

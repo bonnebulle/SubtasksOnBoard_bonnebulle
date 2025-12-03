@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Charger la config MYSQL CRENTIALS !!!!
-$config = require __DIR__ . '/.env.php';
+$config = require __DIR__ . '/.env';
 
 $dsn = "mysql:host={$config['db_host']};dbname={$config['db_name']};charset=utf8mb4";
 $options = [
