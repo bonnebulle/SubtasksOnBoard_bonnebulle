@@ -275,6 +275,8 @@ if ( $("#board").length != 0 ) {
         $(".form-actions").find("#modal-confirm-button").focus()
         $(".form-actions").find("a").addClass("keyboard-clickable").attr("tabindex", "0")
         // alb("kkkk")
+
+
       }
 
       
@@ -566,11 +568,21 @@ if ( $("#board").length != 0 ) {
   // VBULLE SUBTASK on clic +
   function sub_dec_clic(message, context) {
 
+
     // SUBTASK -> TEXTAREA -> PHP MAJ DUE_DESCRIPTION
     $('.sub_desc_title').on('click', function(e) {
       e.preventDefault(); // 1. Empêche le comportement par défaut
       e.stopPropagation();
       // alb("kkkk")
+
+      let checked = $('#no_dragndrop').is(":checked");
+      if (checked) {
+          // alert("checked")
+          return /// PREVENT IF #no_dragndrop checked
+      // } else {
+      //     alert("NOT checked")
+      }
+      
 
       reset_textarea_on_escape();
 
@@ -922,7 +934,20 @@ if ( $("#board").length != 0 ) {
         
       });
 
-    
+
+      $(".board-task-list").on('mousedown', function(e) {
+        if (localStorage.getItem("checkboxState") === "true")  {
+          $(this).sortable('disable');
+        } else {
+          $(this).sortable('enable');
+        }
+      });
+      if (localStorage.getItem("checkboxState") === "true")  {
+        $("body").addClass("editable_mod")
+      } else {
+        $("body").removeClass("editable_mod")
+      }
+
     } else if (context=="title") {
     //// TITLE
 
@@ -1047,12 +1072,28 @@ if ( $("#board").length != 0 ) {
 
 
   //// SAVE TOGGLE SHOW/HIDE
-  function toggle_save_checkboxs($this, $desc, task_id, subtask_id) {
+  function toggle_save_checkboxs($this, $desc, task_id, subtask_id, context) {
     // alb("toggle_save_checkboxs")
     // $this=$(this)
     // let $desc=$($this).parent().parent().next(".sub_desc")
     let $checkbox= $desc.find(".toggle_sub_desc_checkbox")
     
+    if (context=="force") {
+      // alert(context)
+      $checkbox.prop("checked", true);
+      $desc.removeClass("active")
+      $($this).removeClass("active")
+
+      return
+    } 
+    else if (context=="unforce") { 
+      $checkbox.prop("checked", false);
+      $desc.addClass("active")
+      $($this).addClass("active")
+
+      return
+    }
+
     // INVERS (toggle) STATE
     $checkbox.prop("checked", !$checkbox.prop("checked"));
     
@@ -1332,7 +1373,7 @@ if ( $("#board").length != 0 ) {
         let task_link = (action_pls=="md_to_pdf") ?
             "\n[lien vers la tâche]("+proto + "//" + host + public_link +")" :
             proto + "//" + host + public_link
-        alert(task_link)
+        // alert(task_link)
         /// FIRST
         if (tascount == 1) {
             clip_text += aujourdhui + " -- " + time + "\n";
@@ -1990,31 +2031,250 @@ $(document).on("click", ".edit_mod", function (e) {
 
 
 // alert("ready 111");
+// $(document).ready(function() {
+//   var isDragging = false;
+//   var draggedElement = null;
+  
+//   $('.board-task-list').on('mousedown', function() {
+//       isDragging = true;
+//       draggedElement = $(this).closest('.board-task');
+//       console.log('Début drag:', draggedElement);
+//   });
+  
+//   $(document).on('mouseup', function() {
+//       if (isDragging) {
+//           setTimeout(function() {
+//               // console.log('Fin drag-drop');
+//               dragndropend();
+//               isDragging = false;
+//               draggedElement = null;
+//           }, 100); // Petit délai pour laisser le DOM se mettre à jour
+//       }
+//   });
+// });
+
+// function dragndropend() {
+//   console.log("todo on dndrop end")
+// }
+
+
+// ALTDEB
+// $(document).on('Kanboard:BoardController:ready', function() {
+//   console.log('DEBDEB prêt');
+// });
+
+// $(document).on('Kanboard:' + 'BoardController', function() {
+//   console.log('DEBDEB Board détecté');
+// });
+
+// // Ou écouter tous les événements Kanboard
+// $('*').on('*', function(e) {
+//   if (e.namespace && e.namespace.indexOf('Kanboard') > -1) {
+//       console.log('DEBDEB Kanboard:', e);
+//   }
+// });
+
+
+// function yourCustomFunction(element) {
+//   // Votre code personnalisé ici
+//   // console.log('Action custom déclenchée!');
+//   /// TODO Uncaught TypeError: can't access property "outerWidth", this.helper is null
+// }
+
+function onClickBox() {
+  // Cible uniquement la checkbox avec l'ID "box" (ou un sélecteur plus précis)
+  let checked = $('#no_dragndrop').is(":checked");
+  localStorage.setItem("checkboxState", checked.toString()); // Convertir en string
+  console.log("État enregistré :", localStorage.getItem("checkboxState"));
+  remove_redo_data_url() // REDO any clic
+
+
+
+  $(".board-task-list").on('mousedown', function(e) {
+    if (localStorage.getItem("checkboxState") === "true")  {
+      $(this).sortable('disable');
+    } else {
+      $(this).sortable('enable');
+    }
+  });
+  if (localStorage.getItem("checkboxState") === "true")  {
+    $("body").addClass("editable_mod")
+  } else {
+    $("body").removeClass("editable_mod")
+  }
+
+
+}
+function onReady() { // INTIT
+  // Récupérer l'état avec une valeur par défaut (false si null)
+  let checked = localStorage.getItem("checkboxState") === "true";
+  $('#no_dragndrop').prop('checked', checked).click(onClickBox);
+
+
+
+  $(".board-task-list").on('mousedown', function(e) {
+    if (localStorage.getItem("checkboxState") === "true")  {
+      $(this).sortable('disable');
+    } else {
+      $(this).sortable('enable');
+    }
+  });
+  if (localStorage.getItem("checkboxState") === "true")  {
+    $("body").addClass("editable_mod")
+  } else {
+    $("body").removeClass("editable_mod")
+  }
+
+
+
+  remove_redo_data_url()
+}
+function remove_redo_data_url() {
+  let checked = $('#no_dragndrop').is(":checked");
+  if (checked) {
+    // alert("checked")
+    $('[data-task-url]').each(function() {
+      // Récupère la valeur de data-task-url
+      var taskUrl = $(this).data('task-url');
+      
+      // Sauvegarde dans data-task-url-original
+      $(this).attr('data-task-url-original', taskUrl);
+      
+      // Retire data-task-url
+      $(this).removeAttr('data-task-url').removeAttr('style');
+
+
+      $(".task-board").each(function() {
+        $(this).removeAttr('style');
+        $(this).find(".wrap_desc").attr("contenteditable","true")
+      });
+    });
+    // alert("elsee")
+
+
+  } else {
+
+    $('[data-task-url-original]').each(function() {
+      // Récupère la valeur de data-task-url
+      var taskUrl = $(this).data('task-url-original');
+      
+      // Sauvegarde dans data-task-url-original
+      $(this).attr('data-task-url', taskUrl);
+      
+      // Retire data-task-url
+      $(this).removeAttr('data-task-url-original');
+
+      $(".task-board").each(function() {
+        $(this).find(".wrap_desc").attr("contenteditable","false")
+      });
+
+    });
+  }
+}
+
+
+/// PREVENT
 $(document).ready(function() {
-  var isDragging = false;
-  var draggedElement = null;
+
+  $(".input-addon").before("<span id='hideall_wrap'><input id='hideall' type='checkbox'><label for='hideall'> Replier</label> </span><span id='no_dragndrop_wrap'><input id='no_dragndrop' type='checkbox'><label for='no_dragndrop'> Lock_drag</label></span>")
+  onReady() /// Checkbox check
+
+
+  $("#hideall").on("click", function(e) {
+    // e.preventDefault();
+    // alert("click")
+    $(".task-board .table-suboncard .toggle_sub_desc_a").each(function () {
+      $(this).toggleClass("clicked")
+
+      let $this=$(this)
+      let task_id = $(this).attr("data-task_id")
+      let subtask_id = $(this).attr("data-subtask_id")
+
+      //// FUNCTION
+      let $desc=$(this).parent().parent().next(".sub_desc")
+      // alert(subtask_id)
+      let $class = $(this).attr("class")
+      setTimeout(function () {
+        if ($class.includes("clicked")) {
+          toggle_save_checkboxs($this, $desc, task_id, subtask_id, "unforce")
+          // alert("unforce")
+          $("#hideall_wrap").find("label").text("Replier")
+        } else {
+          toggle_save_checkboxs($this, $desc, task_id, subtask_id, "force")
+          // alert("force")
+          $("#hideall_wrap").find("label").text("Déplier")
+        }  
+      },300);
+
+    });
+  })
+
+  function shouldPreventDrag(element) {
+      // VOTRE LOGIQUE ICI
+      // Exemples :
+      // - return $(element).hasClass('locked');
+      // - return $(element).data('status') === 'completed';
+      // - return !userHasPermission();
+      // alert("checked ççç")
+      return localStorage.getItem("checkboxState") === "true";
+      return true; // Pour bloquer tout drag-n-drop
+  }
   
-  $('.board-task-list').on('mousedown', function() {
-      isDragging = true;
-      draggedElement = $(this).closest('.board-task');
-      console.log('Début drag:', draggedElement);
+
+  $(".board-task-list").on('mousedown', function(e) {
+    if (localStorage.getItem("checkboxState") === "true")  {
+      $(this).sortable('disable');
+    } else {
+      $(this).sortable('enable');
+    }
   });
+  if (localStorage.getItem("checkboxState") === "true")  {
+    $("body").addClass("editable_mod")
+  } else {
+    $("body").removeClass("editable_mod")
+  }
+
+
+    
+    // ============================================
+    // MÉTHODE 1 : Bloquer mousedown (avec sélection de texte autorisée)
+    // ============================================
+    $(document).on('mousedown', '.board-task-list .board-task, .board-task-list .draggable-item, .task-board-sort-handle, .fa-arrows-alt', function(e) {
+
+          if (shouldPreventDrag(this)) {
+            var $task = $(this);
+            var $list = $task.closest('.board-task-list');
+            $list.sortable('disable');
+
+          }
+    });
   
-  $(document).on('mouseup', function() {
-      if (isDragging) {
-          setTimeout(function() {
-              // console.log('Fin drag-drop');
-              dragndropend();
-              isDragging = false;
-              draggedElement = null;
-          }, 100); // Petit délai pour laisser le DOM se mettre à jour
-      }
-  });
+
 });
 
-function dragndropend() {
-  console.log("todo on dndrop end")
-}
+
+
+// ============================================
+// BONUS : API pour activer/désactiver dynamiquement
+// ============================================
+window.kanboardDragControl = {
+    enabled: true,
+    
+    disable: function() {
+        this.enabled = false;
+        console.log('🔓 Drag-n-drop débloqué');
+    },
+    
+    enable: function() {
+        this.enabled = true;
+        console.log('🔒 Drag-n-drop bloqué');
+    },
+    
+    toggle: function() {
+        this.enabled = !this.enabled;
+        console.log(this.enabled ? '🔒 Drag-n-drop bloqué' : '🔓 Drag-n-drop débloqué');
+    }
+};
 
 } ///// IF ( $("#board").length != 0 ) {
 

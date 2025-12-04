@@ -2552,3 +2552,53 @@ html.largeview #board .table-suboncard .sub_task_title_only {
 .markdown.description-inside-task li {
   margin-left: 22px;
 }
+
+#no_dragndrop_wrap {
+  float: left;
+  color: #FFF;
+  font-size: 13px;
+  margin-right: 10px;
+}
+#no_dragndrop {
+  float: left;
+}
+#no_dragndrop_wrap label {
+  padding: 0 !important;
+  display: inline;
+  line-height: 1em;
+}
+.wrap_desc[contenteditable="true"] {
+  padding-left: 10px;
+  width: calc(100% + 10px);
+  margin-left: -10px;
+}
+body.editable_mod .subt_tr.edit_me .sub_desc.sub_desc_title.active {
+  overflow-x: auto;
+  height: calc(100vh - 130px);
+  overflow-x: hidden;
+}
+
+/* Inline | https://kb.vincent-bonnefille.fr/?controller=BoardViewController&action=show&plugin=&project_id=12&search=status%3Aopen */
+
+#hideall_wrap {
+  /* display: inline flow-root list-item; */
+  float: left;
+  width: auto;
+  display: inline-block;
+  height: 34px;
+  top: -20px;
+  position: relative;
+  margin-left: -90px;
+}
+
+#hideall, [for="hideall"] {
+  display: inline-block;
+}
+#no_dragndrop_wrap,
+#hideall_wrap {
+  margin-top: 0px;
+  margin-bottom: -10px;
+}
+#hideall_wrap label {
+  color: #FFF;
+}
