@@ -943,9 +943,9 @@ if ( $("#board").length != 0 ) {
         }
       });
       if (localStorage.getItem("checkboxState") === "true")  {
-        $("body").addClass("editable_mod")
+        $("html").addClass("editable_mod")
       } else {
-        $("body").removeClass("editable_mod")
+        $("html").removeClass("editable_mod")
       }
 
     } else if (context=="title") {
@@ -1924,13 +1924,25 @@ function edit_mod(elementUnderMouse) {
 //     } 
 // } /// cible_mod
 
+$(document).on('keydown', function(e) {
 
+
+})
 
 //// KEYPRESS
 $(document).on('keydown', function(e) {
   // Vérifier si une textarea est active - si oui, sortir de la fonction
   if (isTextareaActive()) { // Textarea en court d'edit
+    // alert("editing")
       return;
+  }
+
+
+  if (e.key === 'l' || e.key === 'L') {
+    $("#no_dragndrop").trigger('click')
+  }
+  if (e.key === 'm') {
+    $("#hideall").trigger('click')
   }
 
   /// E edit_mod
@@ -1956,7 +1968,7 @@ $(document).on('keydown', function(e) {
   // } /// C
   
   /// H Hide / show : toggle
-  if (e.key === 'h' || e.key === 'H') {
+  if (e.key === 'h') {
       // Récupérer l'élément sous la souris
       const elementUnderMouse = document.elementFromPoint(mouseX, mouseY);
       
@@ -1984,6 +1996,8 @@ $(document).on('keydown', function(e) {
       }
 
   } /// H
+
+
 
   /// M bug
   if (e.key === 'm' || e.key === 'M') {
@@ -2098,9 +2112,9 @@ function onClickBox() {
     }
   });
   if (localStorage.getItem("checkboxState") === "true")  {
-    $("body").addClass("editable_mod")
+    $("html").addClass("editable_mod")
   } else {
-    $("body").removeClass("editable_mod")
+    $("html").removeClass("editable_mod")
   }
 
 
@@ -2120,9 +2134,9 @@ function onReady() { // INTIT
     }
   });
   if (localStorage.getItem("checkboxState") === "true")  {
-    $("body").addClass("editable_mod")
+    $("html").addClass("editable_mod")
   } else {
-    $("body").removeClass("editable_mod")
+    $("html").removeClass("editable_mod")
   }
 
 
@@ -2176,7 +2190,7 @@ function remove_redo_data_url() {
 /// PREVENT
 $(document).ready(function() {
 
-  $(".input-addon").before("<span id='hideall_wrap'><input id='hideall' type='checkbox'><label for='hideall'> Replier</label> </span><span id='no_dragndrop_wrap'><input id='no_dragndrop' type='checkbox'><label for='no_dragndrop'> Lock_drag</label></span>")
+  $(".input-addon").before("<span id='no_dragndrop_wrap'><input id='no_dragndrop' type='checkbox'><label for='no_dragndrop'> Lock_drag</label></span><span id='hideall_wrap'><input id='hideall' type='checkbox'><label for='hideall'> Replier</label> </span>")
   onReady() /// Checkbox check
 
 
@@ -2229,9 +2243,9 @@ $(document).ready(function() {
     }
   });
   if (localStorage.getItem("checkboxState") === "true")  {
-    $("body").addClass("editable_mod")
+    $("html").addClass("editable_mod")
   } else {
-    $("body").removeClass("editable_mod")
+    $("html").removeClass("editable_mod")
   }
 
 
